@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from .models import Manager, Team
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -40,4 +42,22 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['username'] = user.username
+        token['id'] = user.id
+        # token['manageer'] = Manager.objects.get(id=user.id)
         return token
+
+
+class ManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manager
+        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar',
+                  )
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    manager_team = ManagerSerializer(many=True)
+
+    class Meta:
+        model = Team
+        fields = ('name', 'shortName', 'city', 'country',
+                  'homeStadium', 'foundedDate', 'logo')

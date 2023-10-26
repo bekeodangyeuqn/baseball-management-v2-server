@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import UserSerializer
+from .serializers import ManagerSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from .serializers import MyTokenObtainPairSerializer
+from .models import Manager
 
 
 class UserCreate(APIView):
@@ -45,3 +46,18 @@ class UserLogin(APIView):
 class ObtainTokenPairWithView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
+
+
+class ManagerCreate(generics.CreateAPIView):
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Automatically set the user of the profile to the currently authenticated user
+        serializer.save(user=self.request.user)
+
+
+class ManagerProfile(generics.RetrieveAPIView):
+    queryset = Manager.objects.all()
+    serializer_class = ManagerSerializer
