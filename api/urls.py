@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ManagerCreate, ManagerProfile, ObtainTokenPairWithView, UserCreate, UserLogin
+from .views import ManagerCreate, ManagerProfile, ObtainTokenPairWithView, TeamCreate, UserCreate, UserLogin
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('manager/profile/<int:pk>/',
          ManagerProfile.as_view(), name="manager_profile"),
-    path('manager/create/', ManagerCreate.as_view(), name='manager_create')
+    path('manager/create/', ManagerCreate.as_view(), name='manager_create'),
+    path('team/create/', TeamCreate.as_view(), name='team_create')
 ]

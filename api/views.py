@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import ManagerSerializer, UserSerializer
+from .serializers import ManagerSerializer, TeamSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -48,14 +48,34 @@ class ObtainTokenPairWithView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-class ManagerCreate(generics.CreateAPIView):
-    queryset = Manager.objects.all()
-    serializer_class = ManagerSerializer
+class ManagerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = ManagerSerializer(data=request.data)
+        if serializer.is_valid():
+            manager = serializer.save()
+            if manager:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         # Automatically set the user of the profile to the currently authenticated user
         serializer.save(user=self.request.user)
+
+
+class TeamCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = TeamSerializer(data=request.data)
+        if serializer.is_valid():
+            manager = serializer.save()
+            if manager:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ManagerProfile(generics.RetrieveAPIView):
