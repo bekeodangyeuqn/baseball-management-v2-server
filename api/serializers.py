@@ -4,14 +4,14 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Manager, Team
+from .models import Event, Manager, Player, Team
 import base64
 from django.core.files.base import ContentFile
 import string
 import random
 
 # initializing size of string
-N = 16
+N = 24
 
 
 def base64_to_image(base64_string):
@@ -83,25 +83,56 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     managers = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
     user_id = serializers.IntegerField()
 
     class Meta:
         model = Team
         fields = ('name', 'shortName', 'city', 'country',
-                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id')
+                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id', 'id')
 
     def get_managers(self, obj):
         query_set = Manager.objects.filter(team=obj)
         return [ManagerSerializer(item).data for item in query_set]
+    
+    def get_id(self, obj):
+        return obj.id
 
     def create(self, validated_data):
         logo = base64_to_image(validated_data['logo_str'])
         # date_of_birth = datetime.strptime(
         #     validated_data['date_of_birth'], '%m/%d/%y')
         team = Team.objects.create(
-            name=validated_data['name'], shortName=validated_data['shortName'], country=validated_data['country'], city=validated_data['city'], homeStadium=validated_data['homeStadium'], foundedDate=validated_data['foundedDate'], logo=logo)
+            name=validated_data['name'], shortName=validated_data['shortName'], country=validated_data['country'], 
+            city=validated_data['city'], homeStadium=validated_data['homeStadium'], foundedDate=validated_data['foundedDate'], logo=logo)
         team.save()
         manager = Manager.objects.get(user_id=validated_data['user_id'])
         manager.team = team
         manager.save()
         return team
+    
+class PlayerSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    class Meta:
+        modal = Player
+        fields = ('firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 
+                  'height', 'joinDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email')
+    
+    def create(self, validated_data):
+        avatar = base64_to_image(validated_data['avatar_str'])
+        player = Player.objects.create(firstName=validated_data['firstName'], lastName=validated_data['lastName'], team_id=validated_data['team_id'], 
+                                       firstPos=validated_data['firstPos'], secondPos=validated_data['secondPos'], weight=validated_data['weight'], 
+                                       height=validated_data['height'], joinDate=validated_data['joinDate'], homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'],
+                                       phoneNumber = validated_data['phoneNumber'], avatar=avatar, email=validated_data['email'])
+        player.save()
+        return player
+    
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        modal = Event
+        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd')
+    
+    def create(self,validated_data):
+        event = Event.objects.create(title=validated_data['title'],description=validated_data['description'],team_id=validated_data['team_id'], 
+                                     location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'])
+        event.save()

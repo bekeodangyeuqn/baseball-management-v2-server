@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from .serializers import MyTokenObtainPairSerializer
-from .models import Manager
+from .models import Manager, Team
 
 
 class UserCreate(APIView):
@@ -81,3 +81,7 @@ class TeamCreate(APIView):
 class ManagerProfile(generics.RetrieveAPIView):
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
+
+class TeamProfile(generics.RetrieveAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
