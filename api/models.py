@@ -10,13 +10,15 @@ POSITON = (
         (4, "Second baseman"),
         (5, "Third baseman"),
         (6, "Shortstop"),
-        (7, "Left fielder"),
-        (8, "Center fielder"),
-        (9, "Right fielder"),
+        (7, "Outfielder"),
         (0, "Desinated Hitter"),
         (-1, "Not position")
     )
-
+HAND = (
+    ('S', "Switch"),
+    ('L', "Left"),
+    ('R', "Right"),
+)
 class Team(models.Model):
     name = models.CharField(max_length=200)
     shortName = models.CharField(max_length=4)
@@ -67,6 +69,18 @@ class Player(models.Model):
         upload_to="avatars/", default="avatars/avatar.png", blank=True, null=True)
     avatar_str = models.TextField(blank=True, null=True)
     email = models.EmailField(blank=False, null=False) # Player email is nesscessary for manager to send important information
+    bat_hand = models.CharField(
+        choices=HAND,
+        max_length=1,
+        blank=True,
+        null=True
+    )
+    throw_hand = models.CharField(
+        choices=HAND,
+        max_length=1,
+        blank=True,
+        null=True
+    )
 
 class Event(models.Model):
     title = models.CharField(max_length=200)

@@ -2,16 +2,18 @@ from django.shortcuts import render
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import ManagerSerializer, TeamSerializer, UserSerializer
+from .serializers import EventSerializer, ImporterSerializer, ManagerSerializer, PlayerSerializer, TeamSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from .serializers import MyTokenObtainPairSerializer
-from .models import Manager, Team
+from .models import Event, Manager, Player, Team
+import pandas as pd
 
 
 class UserCreate(APIView):
@@ -77,6 +79,89 @@ class TeamCreate(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class PlayerCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = PlayerSerializer(data=request.data)
+        if serializer.is_valid():
+            player = serializer.save()
+            if player:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ImportPlayerAPIView(APIView):
+    serializer_class = ImporterSerializer
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            data = request.FILES
+            serializer = self.serializer_class(data=data)
+            if serializer.is_valid():
+                excel_file = data.get('file')
+                df = pd.read_excel(excel_file, sheet_name=0)
+                players = []
+                for index, row in df.iterrows():
+                    first_name = row['first_name']
+                    last_name = row['last_name']
+                    first_pos = row['first_pos']
+                    second_pos = row['second_pos']
+                    weight = row['weight']
+                    height = row['height']
+                    join_date = row['join_date']
+                    home_town = row['home_town']
+                    jersey_number = row['jersey_number']
+                    phone_number = row['phone_number']
+                    email = row['email']
+                    bat_hand = row['bat_hand']
+                    throw_hand = row['throw_hand']
+                    short_team_name = row['short_team_name']
+                    team = Team.objects.get(shortName = short_team_name)
+                    player = Player.objects.get(phone_number=phone_number)
+                    if player is not None:
+                        player.delete()
+                    
+                    player = Player(
+                        first_name = first_name,
+                        last_name = last_name,
+                        first_pos = first_pos,
+                        second_pos = second_pos,
+                        team = team,
+                        weight = weight,
+                        height = height,
+                        join_date = join_date,
+                        home_town = home_town,
+                        jersey_number =jersey_number,
+                        phone_number = phone_number,
+                        email = email,
+                        bat_hand = bat_hand,
+                        throw_hand = throw_hand,
+                    )
+                    players.append(player)
+                Player.objects.bulk_create(players)
+                return Response({
+                    'status': True,
+                    'message': "Players created successfully"
+                }, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EventCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            event = serializer.save()
+            if event:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ManagerProfile(generics.RetrieveAPIView):
     queryset = Manager.objects.all()
@@ -85,3 +170,11 @@ class ManagerProfile(generics.RetrieveAPIView):
 class TeamProfile(generics.RetrieveAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+
+class PlayerProfile(generics.RetrieveAPIView):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+class EventProfile(generics.RetrieveAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer

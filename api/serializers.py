@@ -65,11 +65,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class ManagerSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Manager
-        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 'user_id'
+        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 'user_id', 'id'
                   )
+        
+    def get_id(self, obj):
+            return obj.id
 
     def create(self, validated_data):
         avatar = base64_to_image(validated_data['avatar_str'])
@@ -83,7 +87,7 @@ class ManagerSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     managers = serializers.SerializerMethodField()
-    id = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField(read_only=True)
     user_id = serializers.IntegerField()
 
     class Meta:
@@ -113,26 +117,39 @@ class TeamSerializer(serializers.ModelSerializer):
     
 class PlayerSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         modal = Player
         fields = ('firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 
-                  'height', 'joinDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email')
+                  'height', 'joinDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email','id', 'bat_hand', 'throw_hand')
+    
+    def get_id(self, obj):
+        return obj.id
     
     def create(self, validated_data):
         avatar = base64_to_image(validated_data['avatar_str'])
         player = Player.objects.create(firstName=validated_data['firstName'], lastName=validated_data['lastName'], team_id=validated_data['team_id'], 
                                        firstPos=validated_data['firstPos'], secondPos=validated_data['secondPos'], weight=validated_data['weight'], 
                                        height=validated_data['height'], joinDate=validated_data['joinDate'], homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'],
-                                       phoneNumber = validated_data['phoneNumber'], avatar=avatar, email=validated_data['email'])
+                                       phoneNumber = validated_data['phoneNumber'], avatar=avatar, email=validated_data['email'], 
+                                       bat_hand=validated_data['bat_hand'], throw_hand=validated_data['throw_hand'])
         player.save()
         return player
     
+class ImporterSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    
 class EventSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         modal = Event
-        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd')
+        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id')
+
+    def get_id(self, obj):
+        return obj.id
     
     def create(self,validated_data):
         event = Event.objects.create(title=validated_data['title'],description=validated_data['description'],team_id=validated_data['team_id'], 
                                      location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'])
         event.save()
+        return event
