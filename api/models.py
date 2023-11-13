@@ -20,8 +20,8 @@ HAND = (
     ('R', "Right"),
 )
 class Team(models.Model):
-    name = models.CharField(max_length=200)
-    shortName = models.CharField(max_length=4)
+    name = models.CharField(max_length=200, unique=True, db_index=True)
+    shortName = models.CharField(max_length=4, unique=True, db_index=True)
     city = models.CharField(max_length=200, blank=True, null=True)
     country = models.CharField(max_length=200, blank=True, null=True)
     homeStadium = models.CharField(max_length=500, blank=True, null=True)
@@ -68,14 +68,14 @@ class Player(models.Model):
     avatar = models.ImageField(
         upload_to="avatars/", default="avatars/avatar.png", blank=True, null=True)
     avatar_str = models.TextField(blank=True, null=True)
-    email = models.EmailField(blank=False, null=False) # Player email is nesscessary for manager to send important information
-    bat_hand = models.CharField(
+    email = models.EmailField(blank=True, null=True) # Player email is nesscessary for manager to send important information
+    batHand = models.CharField(
         choices=HAND,
         max_length=1,
         blank=True,
         null=True
     )
-    throw_hand = models.CharField(
+    throwHand = models.CharField(
         choices=HAND,
         max_length=1,
         blank=True,

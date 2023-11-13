@@ -59,7 +59,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom claims
         token['username'] = user.username
         token['id'] = user.id
-        # token['manageer'] = Manager.objects.get(id=user.id)
+        token['teamName'] = Manager.objects.get(user=user).team.name
         return token
 
 

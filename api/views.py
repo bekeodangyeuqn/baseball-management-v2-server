@@ -97,58 +97,55 @@ class ImportPlayerAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        try:
-            data = request.FILES
-            serializer = self.serializer_class(data=data)
-            if serializer.is_valid():
-                excel_file = data.get('file')
-                df = pd.read_excel(excel_file, sheet_name=0)
-                players = []
-                for index, row in df.iterrows():
-                    first_name = row['first_name']
-                    last_name = row['last_name']
-                    first_pos = row['first_pos']
-                    second_pos = row['second_pos']
-                    weight = row['weight']
-                    height = row['height']
-                    join_date = row['join_date']
-                    home_town = row['home_town']
-                    jersey_number = row['jersey_number']
-                    phone_number = row['phone_number']
-                    email = row['email']
-                    bat_hand = row['bat_hand']
-                    throw_hand = row['throw_hand']
-                    short_team_name = row['short_team_name']
-                    team = Team.objects.get(shortName = short_team_name)
-                    player = Player.objects.get(phone_number=phone_number)
-                    if player is not None:
-                        player.delete()
-                    
-                    player = Player(
-                        first_name = first_name,
-                        last_name = last_name,
-                        first_pos = first_pos,
-                        second_pos = second_pos,
-                        team = team,
-                        weight = weight,
-                        height = height,
-                        join_date = join_date,
-                        home_town = home_town,
-                        jersey_number =jersey_number,
-                        phone_number = phone_number,
-                        email = email,
-                        bat_hand = bat_hand,
-                        throw_hand = throw_hand,
-                    )
-                    players.append(player)
-                Player.objects.bulk_create(players)
-                return Response({
-                    'status': True,
-                    'message': "Players created successfully"
-                }, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.FILES
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            excel_file = data.get('file')
+            df = pd.read_excel(excel_file, sheet_name=0)
+            players = []
+            for index, row in df.iterrows():
+                first_name = row['first_name']
+                last_name = row['last_name']
+                first_pos = row['first_pos']
+                second_pos = row['second_pos']
+                weight = row['weight']
+                height = row['height']
+                join_date = row['join_date']
+                home_town = row['home_town']
+                jersey_number = row['jersey_number']
+                phone_number = row['phone_number']
+                email = row['email']
+                bat_hand = row['bat_hand']
+                throw_hand = row['throw_hand']
+                short_team_name = row['short_team_name']
+                team = Team.objects.get(shortName = short_team_name)
+                player = Player.objects.get(phoneNumber=phone_number)
+                if player is not None:
+                    player.delete()
+                
+                player = Player(
+                    firstName = first_name,
+                    lastName = last_name,
+                    firstPos = first_pos,
+                    secondPos = second_pos,
+                    team = team,
+                    weight = weight,
+                    height = height,
+                    joinDate = join_date,
+                    homeTown = home_town,
+                    jerseyNumber =jersey_number,
+                    phoneNumber = phone_number,
+                    email = email,
+                    batHand = bat_hand,
+                    throwHand = throw_hand,
+                )
+                players.append(player)
+            Player.objects.bulk_create(players)
+            return Response({
+                'status': True,
+                'message': "Players created successfully"
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EventCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
