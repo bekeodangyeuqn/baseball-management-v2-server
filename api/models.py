@@ -52,11 +52,13 @@ class Player(models.Model):
     firstPos = models.IntegerField(
         choices=POSITON,
         blank=True,
+        null=True,
         default=-1,
     )
     secondPos = models.IntegerField(
         choices=POSITON,
         blank=True,
+        null=True,
         default=-1,
     )
     weight = models.IntegerField(null=True, blank=True)

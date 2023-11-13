@@ -92,6 +92,12 @@ class PlayerCreate(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+def convertToNoneWhenNaN(value):
+    if pd.isnull(value):
+        return None
+    else:
+        return value
+    
 class ImportPlayerAPIView(APIView):
     serializer_class = ImporterSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -103,27 +109,27 @@ class ImportPlayerAPIView(APIView):
         if serializer.is_valid():
             excel_file = data.get('file')
             df = pd.read_excel(excel_file, sheet_name=0)
-            df2 = df.fillna('')
+            # df2 = df.where(pd.notnull(df), None)
             players = []
-            for index, row in df2.iterrows():
-                first_name = row['first_name']
-                last_name = row['last_name']
-                first_pos = row['first_pos']
-                second_pos = row['second_pos']
-                weight = row['weight']
-                height = row['height']
-                join_date = row['join_date']
-                home_town = row['home_town']
-                jersey_number = row['jersey_number']
-                phone_number = row['phone_number']
-                email = row['email']
-                bat_hand = row['bat_hand']
-                throw_hand = row['throw_hand']
-                short_team_name = row['short_team_name']
+            for index, row in df.iterrows():
+                first_name = convertToNoneWhenNaN(row['first_name'])
+                last_name = convertToNoneWhenNaN(row['last_name'])
+                first_pos = convertToNoneWhenNaN(row['first_pos'])
+                second_pos = convertToNoneWhenNaN(row['second_pos'])
+                weight = convertToNoneWhenNaN(row['weight'])
+                height = convertToNoneWhenNaN(row['height'])
+                join_date = convertToNoneWhenNaN(row['join_date'])
+                home_town = convertToNoneWhenNaN(row['home_town'])
+                jersey_number = convertToNoneWhenNaN(row['jersey_number'])
+                phone_number = convertToNoneWhenNaN(row['phone_number'])
+                email = convertToNoneWhenNaN(row['email'])
+                bat_hand = convertToNoneWhenNaN(row['bat_hand'])
+                throw_hand = convertToNoneWhenNaN(row['throw_hand'])
+                short_team_name = convertToNoneWhenNaN(row['short_team_name'])
                 team = Team.objects.get(shortName = short_team_name)
-                # player = Player.objects.get(phoneNumber=phone_number)
-                # if player is not None:
-                #     player.delete()
+                player = Player.objects.filter(phoneNumber=phone_number)
+                if player.exists():
+                    player[0].delete()
                 
                 player = Player(
                     firstName = first_name,
