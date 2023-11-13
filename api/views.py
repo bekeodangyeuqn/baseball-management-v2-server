@@ -14,6 +14,7 @@ from rest_framework import permissions
 from .serializers import MyTokenObtainPairSerializer
 from .models import Event, Manager, Player, Team
 import pandas as pd
+import numpy as np
 
 
 class UserCreate(APIView):
@@ -102,6 +103,7 @@ class ImportPlayerAPIView(APIView):
         if serializer.is_valid():
             excel_file = data.get('file')
             df = pd.read_excel(excel_file, sheet_name=0)
+            df.replace(np.nan, "")
             players = []
             for index, row in df.iterrows():
                 first_name = row['first_name']
@@ -119,9 +121,9 @@ class ImportPlayerAPIView(APIView):
                 throw_hand = row['throw_hand']
                 short_team_name = row['short_team_name']
                 team = Team.objects.get(shortName = short_team_name)
-                player = Player.objects.get(phoneNumber=phone_number)
-                if player is not None:
-                    player.delete()
+                # player = Player.objects.get(phoneNumber=phone_number)
+                # if player is not None:
+                #     player.delete()
                 
                 player = Player(
                     firstName = first_name,
