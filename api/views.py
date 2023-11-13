@@ -103,9 +103,9 @@ class ImportPlayerAPIView(APIView):
         if serializer.is_valid():
             excel_file = data.get('file')
             df = pd.read_excel(excel_file, sheet_name=0)
-            df.fillna('')
+            df2 = df.fillna('')
             players = []
-            for index, row in df.iterrows():
+            for index, row in df2.iterrows():
                 first_name = row['first_name']
                 last_name = row['last_name']
                 first_pos = row['first_pos']
