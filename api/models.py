@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
+from django.db.models import Sum
 
 POSITON = (
         (1, "Picther"),
@@ -63,7 +64,7 @@ class Player(models.Model):
     )
     weight = models.IntegerField(null=True, blank=True)
     height = models.IntegerField(null=True, blank=True)
-    joinDate = models.DateField(null=True, blank=True)
+    birthDate = models.DateField(null=True, blank=True)
     homeTown = models.TextField(null=True, blank=True)
     jerseyNumber = models.IntegerField(null=True, blank=True, default=-1)
     phoneNumber = models.CharField(max_length=11, null=True, blank=True)
@@ -124,15 +125,61 @@ class League(models.Model):
         blank=True,
         default=0,
     )
+    team = models.ForeignKey(
+        Team, on_delete=models.CASCADE, blank=True, null=True)
 
 class Game(models.Model):
-    oop_team = models.CharField(max_length=200)
+    oppTeam = models.CharField(max_length=200)
     league = models.ForeignKey(League, blank=True, null=True, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     timeStart = models.DateTimeField(default=datetime.datetime.now())
     timeEnd = models.DateTimeField(blank=True, null=True)
     stadium = models.CharField(max_length=500, blank=True, null=True)
-    inningERA = models.IntegerField(default=7)
+    inningERA = models.IntegerField(blank=True, null=True, default=7)
+    team = models.ForeignKey(
+        Team, on_delete=models.CASCADE, blank=True, null=True)
+    # team_score = models.IntegerField(blank=True, null=True, default=0)
+    # team_hit = models.IntegerField(blank=True, null=True, default=0)
+    # team_err = models.IntegerField(blank=True, null=True, default=0)
+    # opp_score = models.IntegerField(blank=True, null=True, default=0)
+    # opp_hit = models.IntegerField(blank=True, null=True, default=0)
+    # opp_err = models.IntegerField(blank=True, null=True, default=0)
+
+    @property
+    def team_score(self):
+        batter_games = BatterGame.objects.filter(battergame__game=self)
+        team_scores = sum(batter_game.run for batter_game in batter_games)
+        return team_scores
+    
+    @property
+    def team_error(self):
+        fielder_games = FielderGame.objects.filter(fieldergame__game=self)
+        team_error = sum(fielder_game.error for fielder_game in fielder_games)
+        return team_error
+    
+    @property
+    def team_hit(self):
+        batter_games = BatterGame.objects.filter(battergame__game=self)
+        team_hits = sum(batter_game.hit for batter_game in batter_games)
+        return team_hits
+    
+    @property
+    def opp_score(self):
+        pitcher_games = PitcherGame.objects.filter(pitchergame__game=self)
+        opp_scores = sum(pitcher_game.oppRun for pitcher_game in pitcher_games)
+        return opp_scores
+    
+    @property
+    def opp_error(self):
+        batter_games = BatterGame.objects.filter(battergame__game=self)
+        opp_error = sum(batter_game.onBaseByError for batter_game in batter_games)
+        return opp_error
+    
+    @property
+    def opp_hit(self):
+        pitcher_games = PitcherGame.objects.filter(pitchergame__game=self)
+        opp_hits = sum(pitcher_game.oppHit for pitcher_game in pitcher_games)
+        return opp_hits
 
 class BatterGame(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -155,6 +202,8 @@ class BatterGame(models.Model):
     stolenBase = models.IntegerField(default=0, null=True, blank=True)
     leftOnBase = models.IntegerField(default=0, null=True, blank=True)
     doublePlay = models.IntegerField(default=0, null=True, blank=True)
+    run = models.IntegerField(default=0, null=True, blank=True)
+    onBaseByError = models.IntegerField(default=0, null=True, blank=True)
 
     @property
     def atBat(self):

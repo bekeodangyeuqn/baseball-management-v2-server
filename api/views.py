@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import EventSerializer, ImporterSerializer, ManagerSerializer, PlayerSerializer, TeamSerializer, UserSerializer
+from .serializers import EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +15,21 @@ from .serializers import MyTokenObtainPairSerializer
 from .models import Event, Manager, Player, Team
 import pandas as pd
 import numpy as np
+import base64
+from django.core.files.base import ContentFile
+import string
+import random
 
+# initializing size of string
+N = 24
+
+
+def base64_to_image(base64_string):
+    format, imgstr = base64_string.split(';base64,')
+    ext = format.split('/')[-1]
+    res = ''.join(random.choices(string.ascii_lowercase +
+                                 string.digits, k=N))
+    return ContentFile(base64.b64decode(imgstr), name=str(res) + "." + ext)
 
 class UserCreate(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -84,12 +98,27 @@ class PlayerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format='json'):
-        serializer = PlayerSerializer(data=request.data)
+        serializer = PlayerDetailSerializer(data=request.data)
         if serializer.is_valid():
             player = serializer.save()
             if player:
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlayerAvatarUpdate(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        serializer = PlayerAvatarSerializer(data=request.data)
+        if serializer.is_valid():
+            player = Player.objects.get(pk=kwargs['playerid'])
+            player.avatar_str = serializer.data.get('avatar_str')
+            player.avatar = base64_to_image(serializer.data.get('avatar_str'))
+            player.save()
+            json = serializer.data
+            return Response(json, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 def convertToNoneWhenNaN(value):
@@ -121,7 +150,7 @@ class ImportPlayerAPIView(APIView):
                 join_date = convertToNoneWhenNaN(row['join_date'])
                 home_town = convertToNoneWhenNaN(row['home_town'])
                 jersey_number = convertToNoneWhenNaN(row['jersey_number'])
-                phone_number = convertToNoneWhenNaN(row['phone_number'])
+                phone_number = "0" + convertToNoneWhenNaN(row['phone_number'])
                 email = convertToNoneWhenNaN(row['email'])
                 bat_hand = convertToNoneWhenNaN(row['bat_hand'])
                 throw_hand = convertToNoneWhenNaN(row['throw_hand'])
@@ -166,6 +195,18 @@ class EventCreate(APIView):
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class GameCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = GameCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            event = serializer.save()
+            if event:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ManagerProfile(generics.RetrieveAPIView):
@@ -178,8 +219,32 @@ class TeamProfile(generics.RetrieveAPIView):
 
 class PlayerProfile(generics.RetrieveAPIView):
     queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
+    serializer_class = PlayerDetailSerializer
 
 class EventProfile(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+class PlayerList(generics.ListCreateAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return PlayerListSerializer
+        return PlayerDetailSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Player.objects.filter(team=team)
+    
+class EventList(generics.ListCreateAPIView):
+    serializer_class = EventSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Event.objects.filter(team=team)
+    
+class GameList(generics.ListCreateAPIView):
+    serializer_class = EventSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Event.objects.filter(team=team)

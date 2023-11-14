@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Event, Manager, Player, Team
+from .models import Event, Game, League, Manager, Player, Team
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -15,11 +15,13 @@ N = 24
 
 
 def base64_to_image(base64_string):
-    format, imgstr = base64_string.split(';base64,')
-    ext = format.split('/')[-1]
-    res = ''.join(random.choices(string.ascii_lowercase +
-                                 string.digits, k=N))
-    return ContentFile(base64.b64decode(imgstr), name=str(res) + "." + ext)
+    if (base64_string):
+        format, imgstr = base64_string.split(';base64,')
+        ext = format.split('/')[-1]
+        res = ''.join(random.choices(string.ascii_lowercase +
+                                    string.digits, k=N))
+        return ContentFile(base64.b64decode(imgstr), name=str(res) + "." + ext)
+    return None
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -60,6 +62,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['id'] = user.id
         token['teamName'] = Manager.objects.get(user=user).team.name
+        token['teamid'] = Manager.objects.get(user=user).team.pk
         return token
 
 
@@ -115,34 +118,48 @@ class TeamSerializer(serializers.ModelSerializer):
         manager.save()
         return team
     
-class PlayerSerializer(serializers.ModelSerializer):
+class PlayerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
     class Meta:
-        modal = Player
+        model = Player
         fields = ('firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 
-                  'height', 'joinDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email','id', 'bat_hand', 'throw_hand')
+                  'height', 'birthDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email','id', 'batHand', 'throwHand')
     
     def get_id(self, obj):
         return obj.id
     
     def create(self, validated_data):
-        avatar = base64_to_image(validated_data['avatar_str'])
+        # avatar = base64_to_image(validated_data['avatar_str'])
         player = Player.objects.create(firstName=validated_data['firstName'], lastName=validated_data['lastName'], team_id=validated_data['team_id'], 
                                        firstPos=validated_data['firstPos'], secondPos=validated_data['secondPos'], weight=validated_data['weight'], 
-                                       height=validated_data['height'], joinDate=validated_data['joinDate'], homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'],
-                                       phoneNumber = validated_data['phoneNumber'], avatar=avatar, email=validated_data['email'], 
-                                       bat_hand=validated_data['bat_hand'], throw_hand=validated_data['throw_hand'])
+                                       height=validated_data['height'], birthDate=validated_data['birthDate'], homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'],
+                                       phoneNumber = validated_data['phoneNumber'], email=validated_data['email'], 
+                                       batHand=validated_data['batHand'], throwHand=validated_data['throwHand'])
         player.save()
+
         return player
+    
+    
+class PlayerAvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ('avatar_str',)
+    
+    
+class PlayerListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ('firstName', 'lastName', 'firstPos', 'avatar','id')
     
 class ImporterSerializer(serializers.Serializer):
     file = serializers.FileField()
     
 class EventSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
     class Meta:
-        modal = Event
+        model = Event
         fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id')
 
     def get_id(self, obj):
@@ -153,3 +170,40 @@ class EventSerializer(serializers.ModelSerializer):
                                      location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'])
         event.save()
         return event
+    
+class LeagueSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = League
+        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id', 'achieve')
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        league = League.objects.create(title=validated_data['title'],description=validated_data['description'],team_id=validated_data['team_id'], 
+                                     location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], achieve=validated_data['achieve'])
+        league.save()
+        return league
+    
+class GameCreateSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    league_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Game
+        fields = ('oppTeam', 'league_id', 'description', 'team_id', 'stadium', 'timeEnd', 'timeStart', 'id', 'inningERA',
+                  )
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        game = Game.objects.create(oppTeam=validated_data['oppTeam'], description=validated_data['description'],team_id=validated_data['team_id'], 
+                                     stadium=validated_data['stadium'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], 
+                                     league=validated_data['league'], inningERA=validated_data['inningERA'])
+        game.save()
+        return game
