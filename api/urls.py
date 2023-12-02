@@ -24,6 +24,6 @@ urlpatterns = [
      path('player/create/', PlayerCreate.as_view(), name='team_create'),
      path('player/import/', ImportPlayerAPIView.as_view(), name='players_import'),
      path('players/team/<int:teamid>/', PlayerList.as_view(), name='player-list'),
-     path('events/team/<int:teamid>', EventList.as_view(), name='event-list'),
-     path('games/team/<int:teamid>', GameList.as_view(), name='game-list'),
+     path('events/team/<int:teamid>/', EventList.as_view(), name='event-list'),
+     path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
 ]

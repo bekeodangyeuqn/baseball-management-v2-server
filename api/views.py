@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from .serializers import MyTokenObtainPairSerializer
-from .models import Event, Manager, Player, Team
+from .models import Event, Game, Manager, Player, Team
 import pandas as pd
 import numpy as np
 import base64
@@ -243,8 +243,8 @@ class EventList(generics.ListCreateAPIView):
         return Event.objects.filter(team=team)
     
 class GameList(generics.ListCreateAPIView):
-    serializer_class = EventSerializer
+    serializer_class = GameCreateSerializer
     
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
-        return Event.objects.filter(team=team)
+        return Game.objects.filter(team=team)

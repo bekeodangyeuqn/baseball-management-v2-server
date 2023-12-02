@@ -192,18 +192,23 @@ class GameCreateSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     league_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
+    team_score = serializers.ReadOnlyField()
+    team_hit = serializers.ReadOnlyField()
+    team_error = serializers.ReadOnlyField()
+    opp_score = serializers.ReadOnlyField()
+    opp_hit = serializers.ReadOnlyField()
+    opp_error = serializers.ReadOnlyField()
 
     class Meta:
         model = Game
-        fields = ('oppTeam', 'league_id', 'description', 'team_id', 'stadium', 'timeEnd', 'timeStart', 'id', 'inningERA',
-                  )
+        fields = '__all__'
 
     def get_id(self, obj):
         return obj.id
     
     def create(self,validated_data):
-        game = Game.objects.create(oppTeam=validated_data['oppTeam'], description=validated_data['description'],team_id=validated_data['team_id'], 
+        game = Game.objects.create(oppTeam=validated_data['oppTeam'], oppTeamShort=validated_data['oppTeamShort'], description=validated_data['description'],team_id=validated_data['team_id'], 
                                      stadium=validated_data['stadium'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], 
-                                     league=validated_data['league'], inningERA=validated_data['inningERA'])
+                                     league_id=validated_data['league_id'], inningERA=validated_data['inningERA'])
         game.save()
         return game

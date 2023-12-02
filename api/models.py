@@ -20,6 +20,12 @@ HAND = (
     ('L', "Left"),
     ('R', "Right"),
 )
+
+STATUS = (
+    (-1, "Upcoming"),
+    (0, "In progress"),
+    (1, "Completed"),
+)
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     shortName = models.CharField(max_length=4, unique=True, db_index=True)
@@ -93,6 +99,11 @@ class Event(models.Model):
     location = models.TextField()
     timeStart = models.DateTimeField(default=datetime.datetime.now())
     timeEnd = models.DateTimeField()
+    status = models.IntegerField(
+        choices= STATUS,
+        blank=True,
+        default=-1
+    )
 
 class PlayerEvent(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -111,9 +122,9 @@ class PlayerEvent(models.Model):
 class League(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
-    location = models.TextField()
-    timeStart = models.DateField()
-    timeEnd = models.DateField()
+    location = models.TextField(blank=True, null=True)
+    timeStart = models.DateField(blank=True, null=True)
+    timeEnd = models.DateField(blank=True, null=True)
     ACHIEVE_STATUS = (
         (1, "Champion"),
         (2, "Runner-up"),
@@ -125,11 +136,17 @@ class League(models.Model):
         blank=True,
         default=0,
     )
+    status = models.IntegerField(
+        choices= STATUS,
+        blank=True,
+        default=-1
+    )
     team = models.ForeignKey(
         Team, on_delete=models.CASCADE, blank=True, null=True)
 
 class Game(models.Model):
     oppTeam = models.CharField(max_length=200)
+    oppTeamShort = models.CharField(max_length=4)
     league = models.ForeignKey(League, blank=True, null=True, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     timeStart = models.DateTimeField(default=datetime.datetime.now())
@@ -138,6 +155,11 @@ class Game(models.Model):
     inningERA = models.IntegerField(blank=True, null=True, default=7)
     team = models.ForeignKey(
         Team, on_delete=models.CASCADE, blank=True, null=True)
+    status = models.IntegerField(
+        choices= STATUS,
+        blank=True,
+        default=-1
+    )
     # team_score = models.IntegerField(blank=True, null=True, default=0)
     # team_hit = models.IntegerField(blank=True, null=True, default=0)
     # team_err = models.IntegerField(blank=True, null=True, default=0)
@@ -147,39 +169,51 @@ class Game(models.Model):
 
     @property
     def team_score(self):
-        batter_games = BatterGame.objects.filter(battergame__game=self)
-        team_scores = sum(batter_game.run for batter_game in batter_games)
-        return team_scores
+        batter_games = BatterGame.objects.filter(game=self)
+        if batter_games:
+            team_scores = sum(batter_game.run for batter_game in batter_games)
+            return team_scores
+        return 0
     
     @property
     def team_error(self):
-        fielder_games = FielderGame.objects.filter(fieldergame__game=self)
-        team_error = sum(fielder_game.error for fielder_game in fielder_games)
-        return team_error
+        fielder_games = FielderGame.objects.filter(game=self)
+        if fielder_games:
+            team_error = sum(fielder_game.error for fielder_game in fielder_games)
+            return team_error
+        return 0
     
     @property
     def team_hit(self):
-        batter_games = BatterGame.objects.filter(battergame__game=self)
-        team_hits = sum(batter_game.hit for batter_game in batter_games)
-        return team_hits
+        batter_games = BatterGame.objects.filter(game=self)
+        if batter_games:
+            team_hits = sum(batter_game.hit for batter_game in batter_games)
+            return team_hits
+        return 0
     
     @property
     def opp_score(self):
-        pitcher_games = PitcherGame.objects.filter(pitchergame__game=self)
-        opp_scores = sum(pitcher_game.oppRun for pitcher_game in pitcher_games)
-        return opp_scores
+        pitcher_games = PitcherGame.objects.filter(game=self)
+        if pitcher_games:
+            opp_scores = sum(pitcher_game.oppRun for pitcher_game in pitcher_games)
+            return opp_scores
+        return 0
     
     @property
     def opp_error(self):
-        batter_games = BatterGame.objects.filter(battergame__game=self)
-        opp_error = sum(batter_game.onBaseByError for batter_game in batter_games)
-        return opp_error
+        batter_games = BatterGame.objects.filter(game=self)
+        if batter_games:
+            opp_error = sum(batter_game.onBaseByError for batter_game in batter_games)
+            return opp_error
+        return 0
     
     @property
     def opp_hit(self):
-        pitcher_games = PitcherGame.objects.filter(pitchergame__game=self)
-        opp_hits = sum(pitcher_game.oppHit for pitcher_game in pitcher_games)
-        return opp_hits
+        pitcher_games = PitcherGame.objects.filter(game=self)
+        if pitcher_games:
+            opp_hits = sum(pitcher_game.oppHit for pitcher_game in pitcher_games)
+            return opp_hits
+        return 0
 
 class BatterGame(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
