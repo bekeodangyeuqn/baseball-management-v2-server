@@ -150,7 +150,7 @@ class PlayerAvatarSerializer(serializers.ModelSerializer):
 class PlayerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ('firstName', 'lastName', 'firstPos', 'avatar','id')
+        fields = ('firstName', 'lastName', 'jerseyNumber', 'firstPos', 'secondPos', 'avatar','id')
     
 class ImporterSerializer(serializers.Serializer):
     file = serializers.FileField()

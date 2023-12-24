@@ -147,10 +147,10 @@ class ImportPlayerAPIView(APIView):
                 second_pos = convertToNoneWhenNaN(row['second_pos'])
                 weight = convertToNoneWhenNaN(row['weight'])
                 height = convertToNoneWhenNaN(row['height'])
-                join_date = convertToNoneWhenNaN(row['join_date'])
+                birth_date = convertToNoneWhenNaN(row['birth_date'])
                 home_town = convertToNoneWhenNaN(row['home_town'])
                 jersey_number = convertToNoneWhenNaN(row['jersey_number'])
-                phone_number = "0" + convertToNoneWhenNaN(row['phone_number'])
+                phone_number = "0" + str(convertToNoneWhenNaN(row['phone_number']))
                 email = convertToNoneWhenNaN(row['email'])
                 bat_hand = convertToNoneWhenNaN(row['bat_hand'])
                 throw_hand = convertToNoneWhenNaN(row['throw_hand'])
@@ -168,7 +168,7 @@ class ImportPlayerAPIView(APIView):
                     team = team,
                     weight = weight,
                     height = height,
-                    joinDate = join_date,
+                    birthDate = birth_date,
                     homeTown = home_town,
                     jerseyNumber =jersey_number,
                     phoneNumber = phone_number,
