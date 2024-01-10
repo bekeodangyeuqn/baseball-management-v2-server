@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Event, Game, League, Manager, Player, Team
+from .models import Event, Game, JoinRequest, League, Manager, Player, Team
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -63,16 +63,18 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['id'] = user.id
         token['teamName'] = Manager.objects.get(user=user).team.name
         token['teamid'] = Manager.objects.get(user=user).team.pk
+        token['shortName'] = Manager.objects.get(user=user).team.shortName
         return token
 
 
-class ManagerSerializer(serializers.ModelSerializer):
+class CreateManagerSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Manager
-        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 'user_id', 'id'
+        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 'user_id', 'id', 
+                  'homeTown', 'jerseyNumber', 'phoneNumber', 'email'
                   )
         
     def get_id(self, obj):
@@ -100,7 +102,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def get_managers(self, obj):
         query_set = Manager.objects.filter(team=obj)
-        return [ManagerSerializer(item).data for item in query_set]
+        return [ManagerDetailSerializer(item).data for item in query_set]
     
     def get_id(self, obj):
         return obj.id
@@ -117,6 +119,11 @@ class TeamSerializer(serializers.ModelSerializer):
         manager.team = team
         manager.save()
         return team
+    
+class JoinRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JoinRequest
+        fields = ['user', 'team']
     
 class PlayerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
@@ -138,7 +145,26 @@ class PlayerDetailSerializer(serializers.ModelSerializer):
                                        batHand=validated_data['batHand'], throwHand=validated_data['throwHand'])
         player.save()
 
-        return player
+class ManagerDetailSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Manager
+        fields = ('firstName', 'lastName', 'team_id',
+                  'date_of_birth', 'homeTown', 'jerseyNumber', 'phoneNumber', 'avatar', 'avatar_str', 'email','id')
+    
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self, validated_data):
+        # avatar = base64_to_image(validated_data['avatar_str'])
+        manager = Manager.objects.create(firstName=validated_data['firstName'], lastName=validated_data['lastName'], team_id=validated_data['team_id'], 
+                                        date_of_birth=validated_data['date_of_birth'], homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'],
+                                       phoneNumber = validated_data['phoneNumber'], email=validated_data['email'], 
+        )
+        manager.save()
+
+        return manager
     
     
 class PlayerAvatarSerializer(serializers.ModelSerializer):
@@ -151,6 +177,11 @@ class PlayerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
         fields = ('firstName', 'lastName', 'jerseyNumber', 'firstPos', 'secondPos', 'avatar','id')
+
+class ManagerListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manager
+        fields = ('firstName', 'lastName', 'jerseyNumber', 'avatar','id')
     
 class ImporterSerializer(serializers.Serializer):
     file = serializers.FileField()

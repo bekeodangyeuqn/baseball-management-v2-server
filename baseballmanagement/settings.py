@@ -73,7 +73,7 @@ ROOT_URLCONF = 'baseballmanagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -189,3 +189,13 @@ AWS_QUERY_STRING_AUTH = False
 MEDIA_URL = "https://%s.s3.amazonaws.com/" % AWS_STORAGE_BUCKET_NAME
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'thaiduiqn@gmail.com'
+EMAIL_HOST_PASSWORD = 'lazsfphruznyiqhv'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+

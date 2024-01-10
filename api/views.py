@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, UserSerializer
+from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,8 +11,14 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
+from django.core.mail import send_mail
+from .models import JoinRequest
+from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .models import Event, Game, Manager, Player, Team
 import pandas as pd
 import numpy as np
@@ -19,6 +26,9 @@ import base64
 from django.core.files.base import ContentFile
 import string
 import random
+from .utils import token_generator
+from django.views import View
+from django.views.generic import TemplateView
 
 # initializing size of string
 N = 24
@@ -69,7 +79,7 @@ class ManagerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format='json'):
-        serializer = ManagerSerializer(data=request.data)
+        serializer = CreateManagerSerializer(data=request.data)
         if serializer.is_valid():
             manager = serializer.save()
             if manager:
@@ -81,6 +91,59 @@ class ManagerCreate(APIView):
         # Automatically set the user of the profile to the currently authenticated user
         serializer.save(user=self.request.user)
 
+class JoinTeamRequest(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = JoinRequest.objects.all()
+    serializer_class = JoinRequestSerializer
+
+    def perform_create(self, serializer):
+        join_request = serializer.save()
+        managers = Manager.objects.filter(team=join_request.team)
+        uidb64 = base64.urlsafe_b64encode(force_bytes(join_request.pk))
+
+        domain = get_current_site(self.request).domain
+        link = reverse(
+                "accept_jointeam",
+                kwargs={'pk': join_request.pk},
+            )
+        activate_url = "http://" + domain + link
+        email_subject = "Yêu cầu trở thành nhà quản lý"
+        email_message = "Đây là email từ Baseball management app"
+        email_body = (
+            "Xin chào, "
+            + 
+                f"{join_request.manager.firstName} {join_request.manager.lastName} muốn trở thành nhà quản lý cho đội bóng của bạn. Hãy nhấn vào link bên dưới để đồng ý"
+             + f"\n<a href={activate_url}>"
+                + "Link đồng ý"
+                + "</a>"
+        )
+        send_mail(
+            email_subject,
+            email_message,
+            "thaiduiqn@gmail.com",
+            [managers.email],
+            fail_silently=False,
+            html_message=email_body,
+        )
+
+class AcceptJoinRequestView(View):
+    def get(self, request, *args, **kwargs):
+        join_request = JoinRequest.objects.get(pk=kwargs['pk'])
+
+        # Accept the join request
+        join_request.accepted = 1
+        manager = join_request.manager
+        manager.team = join_request.team
+        join_request.team.managers.add(join_request.manager)
+        manager.save()
+        join_request.save()
+
+        # Add the user to the team
+
+        return redirect('success_page')
+
+class SuccessPageView(TemplateView):
+    template_name = "success.html"
 
 class TeamCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -88,11 +151,15 @@ class TeamCreate(APIView):
     def post(self, request, format='json'):
         serializer = TeamSerializer(data=request.data)
         if serializer.is_valid():
-            manager = serializer.save()
-            if manager:
+            team = serializer.save()
+            if team:
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TeamListView(generics.ListAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
 
 class PlayerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -211,7 +278,7 @@ class GameCreate(APIView):
 
 class ManagerProfile(generics.RetrieveAPIView):
     queryset = Manager.objects.all()
-    serializer_class = ManagerSerializer
+    serializer_class = ManagerDetailSerializer
 
 class TeamProfile(generics.RetrieveAPIView):
     queryset = Team.objects.all()
@@ -234,6 +301,16 @@ class PlayerList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Player.objects.filter(team=team)
+    
+class ManagerList(generics.ListCreateAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ManagerListSerializer
+        return ManagerDetailSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Manager.objects.filter(team=team)
     
 class EventList(generics.ListCreateAPIView):
     serializer_class = EventSerializer

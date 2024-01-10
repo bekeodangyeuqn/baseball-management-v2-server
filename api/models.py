@@ -26,6 +26,12 @@ STATUS = (
     (0, "In progress"),
     (1, "Completed"),
 )
+
+EMAIL_SEND = (
+    (-1, "False"),
+    (0, "Pending"),
+    (1, "True"),
+)
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     shortName = models.CharField(max_length=4, unique=True, db_index=True)
@@ -50,6 +56,20 @@ class Manager(models.Model):
         Team, on_delete=models.CASCADE, blank=True, null=True)
     firstName = models.CharField(max_length=30, blank=True)
     lastName = models.CharField(max_length=30, blank=True)
+    homeTown = models.TextField(null=True, blank=True)
+    jerseyNumber = models.IntegerField(null=True, blank=True, default=-1)
+    phoneNumber = models.CharField(max_length=11, null=True, blank=True)
+    email = models.EmailField(blank=True, null=True)
+
+class JoinRequest(models.Model):
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    accepted = models.IntegerField(
+        choices=EMAIL_SEND,
+        max_length=1,
+        blank=True,
+        default=-1
+    )
 
 class Player(models.Model):
     firstName = models.CharField(max_length=30, blank=True)
@@ -96,18 +116,61 @@ class Event(models.Model):
     description = models.TextField(blank=True, null=True)
     team = models.ForeignKey(
         Team, on_delete=models.CASCADE, blank=True, null=True)
-    location = models.TextField()
+    location = models.TextField(max_length=500, blank=True, null=True)
     timeStart = models.DateTimeField(default=datetime.datetime.now())
-    timeEnd = models.DateTimeField()
+    timeEnd = models.DateTimeField(blank=True, null=True)
     status = models.IntegerField(
         choices= STATUS,
         blank=True,
         default=-1
     )
 
+class Practice(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    team = models.ForeignKey(
+        Team, on_delete=models.CASCADE, blank=True, null=True)
+    location = models.TextField(max_length=500, blank=True, null=True)
+    timeStart = models.DateTimeField(default=datetime.datetime.now())
+    timeEnd = models.DateTimeField(blank=True, null=True)
+    status = models.IntegerField(
+        choices= STATUS,
+        blank=True,
+        default=-1
+    )
+
+
 class PlayerEvent(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ATTEND_STATUS = (
+        (1, "Attend"),
+        (0, "Not attend"),
+        (2, "Pending")
+    )
+    status = models.IntegerField(
+        choices=ATTEND_STATUS,
+        blank=True,
+        default=2,
+    )
+
+class ManagerEvent(models.Model):
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ATTEND_STATUS = (
+        (1, "Attend"),
+        (0, "Not attend"),
+        (2, "Pending")
+    )
+    status = models.IntegerField(
+        choices=ATTEND_STATUS,
+        blank=True,
+        default=2,
+    )
+
+class PlayerPractice(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
     ATTEND_STATUS = (
         (1, "Attend"),
         (0, "Not attend"),
@@ -220,6 +283,7 @@ class BatterGame(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     plateApperance = models.IntegerField(default=0, null=True, blank=True)
     # atBat = models.IntegerField(default=0, null=True, blank=True)
+    battingOrder = models.IntegerField(default=0, null=True, blank=True)
     runBattedIn = models.IntegerField(default=0, null=True, blank=True)
     # hit = models.IntegerField(default=0, null=True, blank=True)
     single = models.IntegerField(default=0, null=True, blank=True)
