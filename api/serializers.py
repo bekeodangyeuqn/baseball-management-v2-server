@@ -60,10 +60,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['username'] = user.username
-        token['id'] = user.id
-        token['teamName'] = Manager.objects.get(user=user).team.name
-        token['teamid'] = Manager.objects.get(user=user).team.pk
-        token['shortName'] = Manager.objects.get(user=user).team.shortName
+        token['userid'] = user.id
+        try:
+            Manager.objects.get(user=user)
+            token['id'] = Manager.objects.get(user=user).pk
+            if Manager.objects.get(user=user).team != None:
+                token['teamName'] = Manager.objects.get(user=user).team.name
+                token['teamid'] = Manager.objects.get(user=user).team.pk
+                token['shortName'] = Manager.objects.get(user=user).team.shortName
+        except Manager.DoesNotExist:
+            token['id'] = None
+            token['teamName'] = None
+            token['teamid'] = None
+            token['shortName'] = None
         return token
 
 
@@ -98,7 +107,7 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ('name', 'shortName', 'city', 'country',
-                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id', 'id')
+                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id', 'id', 'teamFund')
 
     def get_managers(self, obj):
         query_set = Manager.objects.filter(team=obj)
@@ -121,9 +130,16 @@ class TeamSerializer(serializers.ModelSerializer):
         return team
     
 class JoinRequestSerializer(serializers.ModelSerializer):
+    manager_id = serializers.IntegerField()
+    team_id = serializers.IntegerField()
     class Meta:
         model = JoinRequest
-        fields = ['user', 'team']
+        fields = ('manager_id', 'team_id')
+
+    def create(self, validated_data):
+        join_request = JoinRequest.objects.create(manager_id=validated_data['manager_id'], team_id=validated_data['team_id'])
+        join_request.save()
+        return join_request
     
 class PlayerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
@@ -144,6 +160,7 @@ class PlayerDetailSerializer(serializers.ModelSerializer):
                                        phoneNumber = validated_data['phoneNumber'], email=validated_data['email'], 
                                        batHand=validated_data['batHand'], throwHand=validated_data['throwHand'])
         player.save()
+        return player
 
 class ManagerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
@@ -191,7 +208,7 @@ class EventSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Event
-        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id')
+        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id', 'status')
 
     def get_id(self, obj):
         return obj.id

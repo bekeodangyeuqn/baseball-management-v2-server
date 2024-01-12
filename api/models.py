@@ -32,6 +32,51 @@ EMAIL_SEND = (
     (0, "Pending"),
     (1, "True"),
 )
+
+TRANSACTION_TYPE = (
+    (1, "Present"),
+    (2, "League prize"),
+    (3, "Monthly fund"),
+    (4, "Other add"),
+    (-1, "Buy item"),
+    (-2, "Held event"),
+    (-3, "Give present"),
+    (-4, "Other minus"),
+)
+
+EQUIPMENT_TYPE = (
+    (0, "Other"),
+    (1, "Bat"),
+    (2, "Ball"),
+    (3, "Glove"),
+    (4, "Batting helmet"),
+    (5, "Batting glove")
+)
+
+OUTCOME_TYPE = (
+    (1, "Strikeout Looking"),
+    (2, "Strikeout Swinging"),
+    (3, "Groundout"),
+    (4, "Pop/Flyout"),
+    (5, "Sacrifice Fly"),
+    (6, "Sacrifice Bunt"),
+    (7, "Infield Fly"),
+    (8, "Dropped 3rd strike"),
+    (9, "Double Play"),
+    (10, "Triple Play"),
+    (11, "Walk"),
+    (12, "Intentional Walk"),
+    (13, "Single"),
+    (14, "Double"),
+    (15, "Triple"),
+    (16, "Homerun"),
+    (17, "Inside park Homerun"),
+    (18, "Error"),
+    (19, "Hit by pitch"),
+    (20, "Fielder choice"),
+    (21, "Catcher interference"),
+)
+
 class Team(models.Model):
     name = models.CharField(max_length=200, unique=True, db_index=True)
     shortName = models.CharField(max_length=4, unique=True, db_index=True)
@@ -42,7 +87,7 @@ class Team(models.Model):
     logo = models.ImageField(
         upload_to="logos/", default="logos/logo.png", null=True, blank=True)
     logo_str = models.TextField(blank=True, null=True)
-    user_id = models.IntegerField(blank=True, null=True)
+    teamFund = models.BigIntegerField(default=0, blank=True)
 
 
 class Manager(models.Model):
@@ -70,6 +115,7 @@ class JoinRequest(models.Model):
         blank=True,
         default=-1
     )
+    created_at = models.DateTimeField(blank=True, null=True)
 
 class Player(models.Model):
     firstName = models.CharField(max_length=30, blank=True)
@@ -451,6 +497,53 @@ class PitcherGame(models.Model):
     def fieldingIndependentPitching(self):
         return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.strikeout*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
     
+class OffensePitchByPitch(models.Model):
+    batter = models.ForeignKey(Player, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    pitch_count = models.IntegerField()
+    ball_count = models.IntegerField()
+    strike_count = models.IntegerField()
+    outcome =  models.IntegerField(
+        choices=OUTCOME_TYPE,
+        blank=True,
+        default=1,
+    )
+
+class DefensePitchByPitch(models.Model):
+    pitcher = models.ForeignKey(Player, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    pitch_count = models.IntegerField()
+    ball_count = models.IntegerField()
+    strike_count = models.IntegerField()
+    outcome =  models.IntegerField(
+        choices=OUTCOME_TYPE,
+        blank=True,
+        default=1,
+    )
+    
+class Transaction(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    
+    type = models.IntegerField(
+        choices=TRANSACTION_TYPE,
+        blank=True,
+        default=1,
+    )
+    description = models.TextField(blank=True, null=True)
+    time = models.DateTimeField(default=datetime.datetime.now())
+    price = models.BigIntegerField()
+
+class Equipment(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    name = models
+    category = models
+    brand = models.TimeField(null=True, blank=True)
+    price = models.BigIntegerField()
+    description = models.TextField(blank=True, null=True)
+
+
 
 
 

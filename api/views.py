@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from rest_framework import status, generics
@@ -91,40 +92,47 @@ class ManagerCreate(APIView):
         # Automatically set the user of the profile to the currently authenticated user
         serializer.save(user=self.request.user)
 
-class JoinTeamRequest(viewsets.ModelViewSet):
+class JoinTeamRequest(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = JoinRequest.objects.all()
-    serializer_class = JoinRequestSerializer
+    # queryset = JoinRequest.objects.all()
+    # serializer_class = JoinRequestSerializer
 
-    def perform_create(self, serializer):
-        join_request = serializer.save()
-        managers = Manager.objects.filter(team=join_request.team)
-        uidb64 = base64.urlsafe_b64encode(force_bytes(join_request.pk))
+    def post(self, request, format='json'):
+        serializer = JoinRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            join_request = serializer.save()
+            join_request.created_at = datetime.datetime.now()
+            join_request.save()
+            managers = Manager.objects.filter(team=join_request.team)
+            uidb64 = base64.urlsafe_b64encode(force_bytes(join_request.pk))
 
-        domain = get_current_site(self.request).domain
-        link = reverse(
-                "accept_jointeam",
-                kwargs={'pk': join_request.pk},
+            domain = get_current_site(self.request).domain
+            link = reverse(
+                    "accept_jointeam",
+                    kwargs={'pk': join_request.pk},
+                )
+            activate_url = "http://" + domain + link
+            email_subject = "Yêu cầu trở thành nhà quản lý"
+            email_message = "Đây là email từ Baseball management app"
+            email_body = (
+                "Xin chào, "
+                + 
+                    f"{join_request.manager.firstName} {join_request.manager.lastName} muốn trở thành nhà quản lý cho đội bóng của bạn. Hãy nhấn vào link bên dưới để đồng ý"
+                + f"\n<a href={activate_url}>"
+                    + "Link đồng ý"
+                    + "</a>"
             )
-        activate_url = "http://" + domain + link
-        email_subject = "Yêu cầu trở thành nhà quản lý"
-        email_message = "Đây là email từ Baseball management app"
-        email_body = (
-            "Xin chào, "
-            + 
-                f"{join_request.manager.firstName} {join_request.manager.lastName} muốn trở thành nhà quản lý cho đội bóng của bạn. Hãy nhấn vào link bên dưới để đồng ý"
-             + f"\n<a href={activate_url}>"
-                + "Link đồng ý"
-                + "</a>"
-        )
-        send_mail(
-            email_subject,
-            email_message,
-            "thaiduiqn@gmail.com",
-            [managers.email],
-            fail_silently=False,
-            html_message=email_body,
-        )
+            for manager in managers:
+                send_mail(
+                    email_subject,
+                    email_message,
+                    "thaiduiqn@gmail.com",
+                    [manager.email],
+                    fail_silently=False,
+                    html_message=email_body,
+                )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AcceptJoinRequestView(View):
     def get(self, request, *args, **kwargs):
@@ -133,8 +141,9 @@ class AcceptJoinRequestView(View):
         # Accept the join request
         join_request.accepted = 1
         manager = join_request.manager
+        if manager.team != None:
+            return redirect('error_page')
         manager.team = join_request.team
-        join_request.team.managers.add(join_request.manager)
         manager.save()
         join_request.save()
 
@@ -144,6 +153,9 @@ class AcceptJoinRequestView(View):
 
 class SuccessPageView(TemplateView):
     template_name = "success.html"
+
+class ErrorPageView(TemplateView):
+    template_name = "error.html"
 
 class TeamCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
