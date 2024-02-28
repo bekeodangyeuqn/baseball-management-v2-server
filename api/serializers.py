@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Event, Game, JoinRequest, League, Manager, Player, Team
+from .models import Event, Game, JoinRequest, League, Manager, Player, Team, Transaction
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -260,3 +260,21 @@ class GameCreateSerializer(serializers.ModelSerializer):
                                      league_id=validated_data['league_id'], inningERA=validated_data['inningERA'])
         game.save()
         return game
+    
+class TransactionSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+    player_id = serializers.IntegerField()
+
+    class Meta:
+        model = Transaction
+        fields = ('player_id', 'description', 'team_id', 'type', 'time', 'price', 'id')
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        transaction = Transaction.objects.create(player_id=validated_data['player_id'],description=validated_data['description'],team_id=validated_data['team_id'], 
+                                     type=validated_data['type'], time=validated_data['time'], price=validated_data['price'])
+        transaction.save()
+        return transaction

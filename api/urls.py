@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, UserCreate, UserLogin
+from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -22,6 +22,8 @@ urlpatterns = [
      path('teams/', TeamListView.as_view(), name='teams'),
      path('event/profile/<int:pk>/',
          EventProfile.as_view(), name="event_profile"),
+    path('transaction/profile/<int:pk>/',
+         TransactionProfile.as_view(), name="transaction_profile"),
      path('player/profile/<int:pk>/',
          PlayerProfile.as_view(), name="player_profile"),
      path('player/update-avatar/<int:playerid>/', PlayerAvatarUpdate.as_view(), name="player_update_avatar"),
@@ -30,10 +32,12 @@ urlpatterns = [
      path('team/create/', TeamCreate.as_view(), name='team_create'),
      path('event/create/', EventCreate.as_view(), name='event_create'),
      path('game/create/', GameCreate.as_view(), name='game_create'),
+     path('transaction/create/', TransactionCreate.as_view(), name='transaction_create'),
      path('player/create/', PlayerCreate.as_view(), name='team_create'),
      path('player/import/', ImportPlayerAPIView.as_view(), name='players_import'),
      path('players/team/<int:teamid>/', PlayerList.as_view(), name='player-list'),
      path('events/team/<int:teamid>/', EventList.as_view(), name='event-list'),
      path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
+     path('transactions/team/<int:teamid>/', TransactionList.as_view(), name='transaction-list'),
     #  path('', include(router.urls)),
 ]

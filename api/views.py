@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, UserSerializer
+from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 from django.core.mail import send_mail
-from .models import JoinRequest
+from .models import JoinRequest, Transaction
 from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
@@ -281,8 +281,20 @@ class GameCreate(APIView):
     def post(self, request, format='json'):
         serializer = GameCreateSerializer(data=request.data)
         if serializer.is_valid():
-            event = serializer.save()
-            if event:
+            game = serializer.save()
+            if game:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class TransactionCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = TransactionSerializer(data=request.data)
+        if serializer.is_valid():
+            transaction = serializer.save()
+            if transaction:
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -303,6 +315,10 @@ class PlayerProfile(generics.RetrieveAPIView):
 class EventProfile(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+class TransactionProfile(generics.RetrieveAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
 
 class PlayerList(generics.ListCreateAPIView):
     def get_serializer_class(self):
@@ -337,3 +353,10 @@ class GameList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Game.objects.filter(team=team)
+    
+class TransactionList(generics.ListCreateAPIView):
+    serializer_class = TransactionSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Transaction.objects.filter(team=team)

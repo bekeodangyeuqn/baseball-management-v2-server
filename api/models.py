@@ -413,7 +413,6 @@ class FielderGame(models.Model):
         default=-1,
     ))
     # totalChance = models.IntegerField(default=0)
-    totalInGameOut = models.IntegerField(default=0, blank=True, null=True) 
     putOut = models.IntegerField(default=0, null=True, blank=True)
     assist = models.IntegerField(default=0, null=True, blank=True)
     error = models.IntegerField(default=0, null=True, blank=True)
@@ -497,6 +496,28 @@ class PitcherGame(models.Model):
     def fieldingIndependentPitching(self):
         return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.strikeout*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
     
+class Transaction(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    
+    type = models.IntegerField(
+        choices=TRANSACTION_TYPE,
+        blank=True,
+        default=1,
+    )
+    description = models.TextField(blank=True, null=True)
+    time = models.DateTimeField(default=datetime.datetime.now())
+    price = models.BigIntegerField()
+
+class Equipment(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    name = models
+    category = models
+    brand = models.TimeField(null=True, blank=True)
+    price = models.BigIntegerField()
+    description = models.TextField(blank=True, null=True)
+
 class OffensePitchByPitch(models.Model):
     batter = models.ForeignKey(Player, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
@@ -520,28 +541,7 @@ class DefensePitchByPitch(models.Model):
         blank=True,
         default=1,
     )
-    
-class Transaction(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    
-    type = models.IntegerField(
-        choices=TRANSACTION_TYPE,
-        blank=True,
-        default=1,
-    )
-    description = models.TextField(blank=True, null=True)
-    time = models.DateTimeField(default=datetime.datetime.now())
-    price = models.BigIntegerField()
 
-class Equipment(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    name = models
-    category = models
-    brand = models.TimeField(null=True, blank=True)
-    price = models.BigIntegerField()
-    description = models.TextField(blank=True, null=True)
 
 
 
