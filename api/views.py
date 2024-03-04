@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import api_view
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -316,7 +317,15 @@ class EventProfile(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+class EventDelete(generics.DestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
 class TransactionProfile(generics.RetrieveAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+class TransactionDelete(generics.DestroyAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 

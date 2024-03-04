@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin
+from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -22,8 +22,12 @@ urlpatterns = [
      path('teams/', TeamListView.as_view(), name='teams'),
      path('event/profile/<int:pk>/',
          EventProfile.as_view(), name="event_profile"),
-    path('transaction/profile/<int:pk>/',
+     path('event/profile/<int:pk>/',
+         EventDelete.as_view(), name="event_delete"),
+     path('transaction/profile/<int:pk>/',
          TransactionProfile.as_view(), name="transaction_profile"),
+     path('transaction/delete/<int:pk>/',
+         TransactionDelete.as_view(), name="transaction_delete"),
      path('player/profile/<int:pk>/',
          PlayerProfile.as_view(), name="player_profile"),
      path('player/update-avatar/<int:playerid>/', PlayerAvatarUpdate.as_view(), name="player_update_avatar"),
