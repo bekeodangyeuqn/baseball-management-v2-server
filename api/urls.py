@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete
+from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -28,6 +28,8 @@ urlpatterns = [
          TransactionProfile.as_view(), name="transaction_profile"),
      path('transaction/delete/<int:pk>/',
          TransactionDelete.as_view(), name="transaction_delete"),
+    path('transaction/delete/<int:pk>/',
+         EquipmentDelete.as_view(), name="equipment_delete"),
      path('player/profile/<int:pk>/',
          PlayerProfile.as_view(), name="player_profile"),
      path('player/update-avatar/<int:playerid>/', PlayerAvatarUpdate.as_view(), name="player_update_avatar"),
@@ -37,11 +39,13 @@ urlpatterns = [
      path('event/create/', EventCreate.as_view(), name='event_create'),
      path('game/create/', GameCreate.as_view(), name='game_create'),
      path('transaction/create/', TransactionCreate.as_view(), name='transaction_create'),
+     path('equipment/create/', EquipmentCreate.as_view(), name='equipment_create'),
      path('player/create/', PlayerCreate.as_view(), name='team_create'),
      path('player/import/', ImportPlayerAPIView.as_view(), name='players_import'),
      path('players/team/<int:teamid>/', PlayerList.as_view(), name='player-list'),
      path('events/team/<int:teamid>/', EventList.as_view(), name='event-list'),
      path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
      path('transactions/team/<int:teamid>/', TransactionList.as_view(), name='transaction-list'),
+      path('equipments/team/<int:teamid>/', EquipmentList.as_view(), name='equipment-list'),
     #  path('', include(router.urls)),
 ]

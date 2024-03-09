@@ -49,8 +49,6 @@ EQUIPMENT_TYPE = (
     (1, "Bat"),
     (2, "Ball"),
     (3, "Glove"),
-    (4, "Batting helmet"),
-    (5, "Batting glove")
 )
 
 OUTCOME_TYPE = (
@@ -512,11 +510,19 @@ class Transaction(models.Model):
 class Equipment(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    name = models
-    category = models
-    brand = models.TimeField(null=True, blank=True)
+    name = models.TextField(default="No name")
+    category = models.IntegerField(
+        choices=EQUIPMENT_TYPE,
+        blank=True,
+        null=True,
+        default=-1,
+    )
+    brand = models.TextField(default="No brand")
     price = models.BigIntegerField()
     description = models.TextField(blank=True, null=True)
+    avatar = models.ImageField(
+        upload_to="equipments/", default="equipments/equipment.png", blank=True, null=True)
+    avatar_str = models.TextField(blank=True, null=True)
 
 class OffensePitchByPitch(models.Model):
     batter = models.ForeignKey(Player, on_delete=models.CASCADE)

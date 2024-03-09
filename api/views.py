@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer
+from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,7 +21,7 @@ from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from .models import Event, Game, Manager, Player, Team
+from .models import Event, Game, Manager, Player, Team, Equipment
 import pandas as pd
 import numpy as np
 import base64
@@ -300,6 +300,19 @@ class TransactionCreate(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class EquipmentCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = EquipmentSerializer(data=request.data)
+        if serializer.is_valid():
+            equipment = serializer.save()
+            if equipment:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class ManagerProfile(generics.RetrieveAPIView):
     queryset = Manager.objects.all()
@@ -328,6 +341,14 @@ class TransactionProfile(generics.RetrieveAPIView):
 class TransactionDelete(generics.DestroyAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+class EquipmentProfile(generics.RetrieveAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+
+class EquipmentDelete(generics.DestroyAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
 
 class PlayerList(generics.ListCreateAPIView):
     def get_serializer_class(self):
@@ -369,3 +390,10 @@ class TransactionList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Transaction.objects.filter(team=team)
+    
+class EquipmentList(generics.ListCreateAPIView):
+    serializer_class = TransactionSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Equipment.objects.filter(team=team)
