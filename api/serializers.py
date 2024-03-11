@@ -285,7 +285,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
     player_id = serializers.IntegerField()
 
     class Meta:
-        model = Transaction
+        model = Equipment
         fields = ('player_id', 'team_id', 'name', 'category', 'brand', 'price', 'description','avatar', 'avatar_str', 'id')
 
     def get_id(self, obj):

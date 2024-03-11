@@ -518,7 +518,7 @@ class Equipment(models.Model):
         default=-1,
     )
     brand = models.TextField(default="No brand")
-    price = models.BigIntegerField()
+    price = models.BigIntegerField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     avatar = models.ImageField(
         upload_to="equipments/", default="equipments/equipment.png", blank=True, null=True)

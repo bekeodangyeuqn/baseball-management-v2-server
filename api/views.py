@@ -392,7 +392,7 @@ class TransactionList(generics.ListCreateAPIView):
         return Transaction.objects.filter(team=team)
     
 class EquipmentList(generics.ListCreateAPIView):
-    serializer_class = TransactionSerializer
+    serializer_class = EquipmentSerializer
     
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
