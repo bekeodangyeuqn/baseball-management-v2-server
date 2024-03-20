@@ -60,7 +60,7 @@ OUTCOME_TYPE = (
     (6, "Sacrifice Bunt"),
     (7, "Infield Fly"),
     (8, "Dropped 3rd strike"),
-    (9, "Double Play"),
+    (9, "Ground into Double Play"),
     (10, "Triple Play"),
     (11, "Walk"),
     (12, "Intentional Walk"),
@@ -73,6 +73,7 @@ OUTCOME_TYPE = (
     (19, "Hit by pitch"),
     (20, "Fielder choice"),
     (21, "Catcher interference"),
+    (22, "Fly into Double Play"),
 )
 
 class Team(models.Model):
@@ -340,16 +341,17 @@ class BatterGame(models.Model):
     strikeOut = models.IntegerField(default=0, null=True, blank=True)
     fielderChoice = models.IntegerField(default=0, null=True, blank=True)
     sacrificeFly = models.IntegerField(default=0, null=True, blank=True)
-    sacrificeHit = models.IntegerField(default=0, null=True, blank=True)
+    sacrificeBunt = models.IntegerField(default=0, null=True, blank=True)
     stolenBase = models.IntegerField(default=0, null=True, blank=True)
     leftOnBase = models.IntegerField(default=0, null=True, blank=True)
     doublePlay = models.IntegerField(default=0, null=True, blank=True)
+    triplePlay = models.IntegerField(default=0, null=True, blank=True)
     run = models.IntegerField(default=0, null=True, blank=True)
     onBaseByError = models.IntegerField(default=0, null=True, blank=True)
 
     @property
     def atBat(self):
-        return self.plateApperance - self.baseOnBall - self.hitByPitch - self.sacrificeFly - self.sacrificeHit
+        return self.plateApperance - self.baseOnBall - self.hitByPitch - self.sacrificeFly - self.sacrificeBunt
 
     @property
     def hit(self):
@@ -444,7 +446,7 @@ class PitcherGame(models.Model):
     balk = models.IntegerField(default=0, blank=True, null=True)
     wildPitch = models.IntegerField(default=0, blank=True, null=True)
     oppHomeRun = models.IntegerField(default=0, blank=True, null=True)
-    oppSacrificeHit = models.IntegerField(default=0, blank=True, null=True)
+    oppSacrificeBunt = models.IntegerField(default=0, blank=True, null=True)
     oppSacrificeFly  = models.IntegerField(default=0, blank=True, null=True)
     catcherInterference = models.IntegerField(default=0, blank=True, null=True)
     firstPitchStrike = models.IntegerField(default=0, blank=True, null=True)
@@ -479,7 +481,7 @@ class PitcherGame(models.Model):
     @property
     def battingAvarageAgainst(self):
         up = self.oppHit
-        down = self.totalBatterFaced - self.oppBaseOnBall - self.hitBatter - self.oppSacrificeFly - self.oppSacrificeHit - self.catcherInterference
+        down = self.totalBatterFaced - self.oppBaseOnBall - self.hitBatter - self.oppSacrificeFly - self.oppSacrificeBunt - self.catcherInterference
         if down == 0:
             return '-'
         return "{:.3f}".format(up/down)
@@ -535,6 +537,7 @@ class OffensePitchByPitch(models.Model):
         blank=True,
         default=1,
     )
+    description = models.TextField(blank=True, null=True)
 
 class DefensePitchByPitch(models.Model):
     pitcher = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -547,7 +550,7 @@ class DefensePitchByPitch(models.Model):
         blank=True,
         default=1,
     )
-
+    description = models.TextField(blank=True, null=True)
 
 
 
