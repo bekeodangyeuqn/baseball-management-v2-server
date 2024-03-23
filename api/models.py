@@ -61,7 +61,7 @@ OUTCOME_TYPE = (
     (7, "Infield Fly"),
     (8, "Dropped 3rd strike"),
     (9, "Ground into Double Play"),
-    (10, "Triple Play"),
+    (10, "Ground into Triple Play"),
     (11, "Walk"),
     (12, "Intentional Walk"),
     (13, "Single"),
@@ -74,6 +74,7 @@ OUTCOME_TYPE = (
     (20, "Fielder choice"),
     (21, "Catcher interference"),
     (22, "Fly into Double Play"),
+    (23, "Fly into Triple Play"),
 )
 
 class Team(models.Model):
@@ -441,14 +442,11 @@ class PitcherGame(models.Model):
     oppRun = models.IntegerField(default=0, blank=True, null=True)
     earnedRun = models.IntegerField(default=0, blank=True, null=True)
     oppBaseOnBall = models.IntegerField(default=0, blank=True, null=True)
-    strikeout = models.IntegerField(default=0, blank=True, null=True)
+    oppStrikeout = models.IntegerField(default=0, blank=True, null=True)
     hitBatter = models.IntegerField(default=0, blank=True, null=True)
     balk = models.IntegerField(default=0, blank=True, null=True)
     wildPitch = models.IntegerField(default=0, blank=True, null=True)
     oppHomeRun = models.IntegerField(default=0, blank=True, null=True)
-    oppSacrificeBunt = models.IntegerField(default=0, blank=True, null=True)
-    oppSacrificeFly  = models.IntegerField(default=0, blank=True, null=True)
-    catcherInterference = models.IntegerField(default=0, blank=True, null=True)
     firstPitchStrike = models.IntegerField(default=0, blank=True, null=True)
     pickOff = models.IntegerField(default=0, blank=True, null=True)
 
@@ -494,7 +492,11 @@ class PitcherGame(models.Model):
     
     @property
     def fieldingIndependentPitching(self):
-        return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.strikeout*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
+        return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.oppStrikeout*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
+    
+    @property
+    def pitchCount(self):
+        return self.pictchStrike + self.pitchBall
     
 class Transaction(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
