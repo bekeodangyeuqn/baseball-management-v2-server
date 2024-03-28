@@ -15,6 +15,21 @@ POSITON = (
         (0, "Desinated Hitter"),
         (-1, "Not position")
     )
+
+INGAME_POSITON = (
+        (1, "Picther"),
+        (2, "Catcher"),
+        (3, "First baseman"),
+        (4, "Second baseman"),
+        (5, "Third baseman"),
+        (6, "Shortstop"),
+        (7, "Left fielder"),
+        (8, "Center fielder"),
+        (9, "Right fielder"),
+        (0, "Desinated Hitter"),
+        (-1, "Not position")
+)
+
 HAND = (
     ('S', "Switch"),
     ('L', "Left"),
@@ -351,12 +366,12 @@ class PlayerGame(models.Model):
     run = models.IntegerField(default=0, null=True, blank=True)
     onBaseByError = models.IntegerField(default=0, null=True, blank=True)
     position = models.IntegerField(
-        choices=POSITON,
+        choices=INGAME_POSITON,
         blank=True,
         default=-1,
     )
     playedPos = ArrayField(models.IntegerField(
-        choices=POSITON,
+        choices=INGAME_POSITON,
         blank=True,
         default=-1,
     ))
@@ -373,7 +388,7 @@ class PlayerGame(models.Model):
     oppRun = models.IntegerField(default=0, blank=True, null=True)
     earnedRun = models.IntegerField(default=0, blank=True, null=True)
     oppBaseOnBall = models.IntegerField(default=0, blank=True, null=True)
-    oppStrikeout = models.IntegerField(default=0, blank=True, null=True)
+    oppStrikeOut = models.IntegerField(default=0, blank=True, null=True)
     hitBatter = models.IntegerField(default=0, blank=True, null=True)
     balk = models.IntegerField(default=0, blank=True, null=True)
     wildPitch = models.IntegerField(default=0, blank=True, null=True)
@@ -468,13 +483,13 @@ class PlayerGame(models.Model):
     def runnerAllowed(self):
         return self.oppHit + self.oppBaseOnBall + self.hitBatter
     
-    @property
-    def battingAvarageAgainst(self):
-        up = self.oppHit
-        down = self.totalBatterFaced - self.oppBaseOnBall - self.hitBatter - self.oppSacrificeFly - self.oppSacrificeBunt - self.catcherInterference
-        if down == 0:
-            return '-'
-        return "{:.3f}".format(up/down)
+    # @property
+    # def battingAvarageAgainst(self):
+    #     up = self.oppHit
+    #     down = self.totalBatterFaced - self.oppBaseOnBall - self.hitBatter - self.oppSacrificeFly - self.oppSacrificeBunt - self.catcherInterference
+    #     if down == 0:
+    #         return '-'
+    #     return "{:.3f}".format(up/down)
 
     @property
     def firstPitchStrikePercenttage(self):
@@ -484,11 +499,13 @@ class PlayerGame(models.Model):
     
     @property
     def fieldingIndependentPitching(self):
-        return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.oppStrikeout*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
+        if self.totalInGameOut == 0:
+            return '-'
+        return ((self.oppHomeRun*13 + (self.hitBatter + self.oppBaseOnBall)*3 - self.oppStrikeOut*2) / ((self.totalInGameOut // 3) + ((self.totalInGameOut % 3) / 3))) + 3.2
     
     @property
     def pitchCount(self):
-        return self.pictchStrike + self.pitchBall
+        return self.pitchStrike + self.pitchBall
    
 class Transaction(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
@@ -530,9 +547,9 @@ class AtBat(models.Model):
     ball =  models.IntegerField(default=0, null=True, blank=True)
     strike =  models.IntegerField(default=0, null=True, blank=True)
     isOffense =  models.IntegerField(default=0, null=True, blank=True)
-    isRunnerFirstOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_first')
-    isRunnerSecondOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_second')
-    isRunnerThirdOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_third')
+    isRunnerFirstOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_first', null=True, blank=True)
+    isRunnerSecondOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_second', null=True, blank=True)
+    isRunnerThirdOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_third', null=True, blank=True)
     isRunnerFirstDef = models.IntegerField(null=True, blank=True)
     isRunnerSecondDef = models.IntegerField(null=True, blank=True)
     isRunnerThirdDef = models.IntegerField(null=True, blank=True)
@@ -544,7 +561,7 @@ class AtBat(models.Model):
         default=1,
     )
     description = models.TextField(blank=True, null=True)
-    currentPitcher = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='current_pitcher')
+    currentPitcher = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='current_pitcher', null=True, blank=True)
 
 
 

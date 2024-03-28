@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -316,7 +316,7 @@ class PlayerGameCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format='json'):
-        serializer = PlayerGameSerializer(data=request.data)
+        serializer = PlayerGameCreateSerializer(data=request.data)
         if serializer.is_valid():
             playergame = serializer.save()
             if playergame:
