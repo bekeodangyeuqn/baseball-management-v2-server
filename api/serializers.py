@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment
+from .models import AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -297,3 +297,77 @@ class EquipmentSerializer(serializers.ModelSerializer):
                                      category=validated_data['category'], brand=validated_data['brand'], description=validated_data['description'], avatar=avatar)
         equipment.save()
         return equipment
+    
+class PlayerGameSerializer(serializers.ModelSerializer):
+    game_id = serializers.IntegerField()
+    player_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+    atBat = serializers.ReadOnlyField()
+    hit = serializers.ReadOnlyField() 
+    battingAverage = serializers.ReadOnlyField() 
+    onBasePercentage = serializers.ReadOnlyField() 
+    sluggingPercentage = serializers.ReadOnlyField()
+    onBasePlusSlugging = serializers.ReadOnlyField() 
+    weightedOnBasePercentage = serializers.ReadOnlyField() 
+    totalChance = serializers.ReadOnlyField()
+    fieldingPercentace = serializers.ReadOnlyField() 
+    earnedRunAvarage = serializers.ReadOnlyField() 
+    walkAndHitPerInning = serializers.ReadOnlyField() 
+    runnerAllowed = serializers.ReadOnlyField() 
+    battingAvarageAgainst = serializers.ReadOnlyField() 
+    firstPitchStrikePercenttage = serializers.ReadOnlyField() 
+    fieldingIndependentPitching = serializers.ReadOnlyField() 
+
+    class Meta:
+        model = PlayerGame
+        fields = '__all__'
+
+    def get_id(self, obj):
+        return obj.id
+
+    def create(self,validated_data):
+        playerGame = PlayerGame.objects.create(player_id=validated_data['playerid'],gane_id=validated_data['gameid'], 
+                                     plateApperance=validated_data['plateApperance'], runBattedIn=validated_data['runBattedIn'], single=validated_data['single'], 
+                                     double=validated_data['double'], triple=validated_data['triple'], 
+                                     homeRun=validated_data['homeRun'], baseOnBall=validated_data['baseOnBall'], 
+                                     intentionalBB=validated_data['intentionalBB'], hitByPitch=validated_data['hitByPitch'], 
+                                     strikeOut=validated_data['strikeOut'], fielderChoice=validated_data['fielderChoice'], 
+                                     sacrificeFly=validated_data['sacrificeFly'], sacrificeBunt=validated_data['sacrificeBunt'], 
+                                     stolenBase=validated_data['stolenBase'], leftOnBase=validated_data['leftOnBase'],  doublePlay=validated_data['doublePlay'], 
+                                     triplePlay=validated_data['triplePlay'], run = validated_data['run'], onBaseByError=validated_data['onBaseByError'],
+                                     position=validated_data['position'], playedPos=validated_data['playedPos'], putOut=validated_data['putOut'], 
+                                     assist=validated_data['assist'], error=validated_data['error'], passedBall=validated_data['passedBall'], pitchBall=validated_data['pitchBall'],
+                                     pitchStrike=validated_data['pitchStrike'], totalBatterFaced=validated_data['totalBatterFaced'], totalInGameOut=validated_data['totalInGameOut'],
+                                     oppHit=validated_data['oppHit'], oppRun=validated_data['oppRun'], earnedRun=validated_data['earnedRun'], oppBaseOnBall=validated_data['oppBaseOnBall'],
+                                     oppStrikeout=validated_data['oppStrikeout'], hitBatter=validated_data['hitBatter'], balk=validated_data['balk'], wildPitch=validated_data['wildPitch'],
+                                     oppHomeRun=validated_data['oppHomeRun'], firstPitchStrike=validated_data['firstPitchStrike'], pickOff=validated_data['pickOff'],)
+        playerGame.save()
+        return playerGame
+    
+class AtBatSerializer(serializers.ModelSerializer):
+    game_id = serializers.IntegerField()
+    isRunnerFirstOff_id = serializers.IntegerField()
+    isRunnerSecondOff_id = serializers.IntegerField()
+    isRunnerThirdOff_id = serializers.IntegerField()
+    currentPitcher_id = serializers.IntegerField()
+
+    class Meta:
+        model = AtBat
+        fields = '__all__'
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        atBat = AtBat.objects.create(game_id=validated_data['game_id'], isRunnerFirstOff_id=validated_data['isRunnerFirstOff_id'], 
+                                     isRunnerSecondOff_id=validated_data['isRunnerSecondOff_id'], isRunnerThirdOff_id=validated_data['isRunnerThirdOff_id'], 
+                                     inning=validated_data['inning'], out=validated_data['out'], ball=validated_data['ball'], strike=validated_data['strike'], 
+                                     teamScore=validated_data['teamScore'], oppScore=validated_data['oppScore'], isTop=validated_data['isTop'], 
+                                     isOffense=validated_data['isOffense'], isRunnerFirstDef=validated_data['isRunnerFirstDef'], isRunnerSecondDef=validated_data['isRunnerSecondDef'], 
+                                     isRunnerThirdDef=validated_data['isRunnerThirdDef'], currentPitcher_id=validated_data['currentPitcher_id'], 
+                                     oppCurPlayer=validated_data['oppCurPlayer'], currentPlayer=validated_data['currentPlayer'], 
+                                     outcomeType=validated_data['outcomeType'], description=validated_data['description'])
+        atBat.save()
+        return atBat
+
+

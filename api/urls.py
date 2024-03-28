@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
+from .views import AcceptJoinRequestView, AtBatList, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameList, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -28,7 +28,7 @@ urlpatterns = [
          TransactionProfile.as_view(), name="transaction_profile"),
      path('transaction/delete/<int:pk>/',
          TransactionDelete.as_view(), name="transaction_delete"),
-    path('transaction/delete/<int:pk>/',
+     path('transaction/delete/<int:pk>/',
          EquipmentDelete.as_view(), name="equipment_delete"),
      path('player/profile/<int:pk>/',
          PlayerProfile.as_view(), name="player_profile"),
@@ -46,6 +46,8 @@ urlpatterns = [
      path('events/team/<int:teamid>/', EventList.as_view(), name='event-list'),
      path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
      path('transactions/team/<int:teamid>/', TransactionList.as_view(), name='transaction-list'),
-      path('equipments/team/<int:teamid>/', EquipmentList.as_view(), name='equipment-list'),
+     path('equipments/team/<int:teamid>/', EquipmentList.as_view(), name='equipment-list'),
+     path('playergames/game/<int:gameid>/', PlayerGameList.as_view(), name='playergame-list'),
+     path('atbats/game/<int:gameid>/', AtBatList.as_view(), name='atbat-list'),
     #  path('', include(router.urls)),
 ]

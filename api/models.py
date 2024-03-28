@@ -278,7 +278,7 @@ class Game(models.Model):
 
     @property
     def team_score(self):
-        batter_games = BatterGame.objects.filter(game=self)
+        batter_games = PlayerGame.objects.filter(game=self)
         if batter_games:
             team_scores = sum(batter_game.run for batter_game in batter_games)
             return team_scores
@@ -286,7 +286,7 @@ class Game(models.Model):
     
     @property
     def team_error(self):
-        fielder_games = FielderGame.objects.filter(game=self)
+        fielder_games = PlayerGame.objects.filter(game=self)
         if fielder_games:
             team_error = sum(fielder_game.error for fielder_game in fielder_games)
             return team_error
@@ -294,7 +294,7 @@ class Game(models.Model):
     
     @property
     def team_hit(self):
-        batter_games = BatterGame.objects.filter(game=self)
+        batter_games = PlayerGame.objects.filter(game=self)
         if batter_games:
             team_hits = sum(batter_game.hit for batter_game in batter_games)
             return team_hits
@@ -302,7 +302,7 @@ class Game(models.Model):
     
     @property
     def opp_score(self):
-        pitcher_games = PitcherGame.objects.filter(game=self)
+        pitcher_games = PlayerGame.objects.filter(game=self)
         if pitcher_games:
             opp_scores = sum(pitcher_game.oppRun for pitcher_game in pitcher_games)
             return opp_scores
@@ -310,7 +310,7 @@ class Game(models.Model):
     
     @property
     def opp_error(self):
-        batter_games = BatterGame.objects.filter(game=self)
+        batter_games = PlayerGame.objects.filter(game=self)
         if batter_games:
             opp_error = sum(batter_game.onBaseByError for batter_game in batter_games)
             return opp_error
@@ -318,18 +318,19 @@ class Game(models.Model):
     
     @property
     def opp_hit(self):
-        pitcher_games = PitcherGame.objects.filter(game=self)
+        pitcher_games = PlayerGame.objects.filter(game=self)
         if pitcher_games:
             opp_hits = sum(pitcher_game.oppHit for pitcher_game in pitcher_games)
             return opp_hits
         return 0
 
-class BatterGame(models.Model):
+class PlayerGame(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0, null=True, blank=True)
     plateApperance = models.IntegerField(default=0, null=True, blank=True)
-    # atBat = models.IntegerField(default=0, null=True, blank=True)
     battingOrder = models.IntegerField(default=0, null=True, blank=True)
+    # atBat = models.IntegerField(default=0, null=True, blank=True)
     runBattedIn = models.IntegerField(default=0, null=True, blank=True)
     # hit = models.IntegerField(default=0, null=True, blank=True)
     single = models.IntegerField(default=0, null=True, blank=True)
@@ -349,6 +350,36 @@ class BatterGame(models.Model):
     triplePlay = models.IntegerField(default=0, null=True, blank=True)
     run = models.IntegerField(default=0, null=True, blank=True)
     onBaseByError = models.IntegerField(default=0, null=True, blank=True)
+    position = models.IntegerField(
+        choices=POSITON,
+        blank=True,
+        default=-1,
+    )
+    playedPos = ArrayField(models.IntegerField(
+        choices=POSITON,
+        blank=True,
+        default=-1,
+    ))
+    # totalChance = models.IntegerField(default=0)
+    putOut = models.IntegerField(default=0, null=True, blank=True)
+    assist = models.IntegerField(default=0, null=True, blank=True)
+    error = models.IntegerField(default=0, null=True, blank=True)
+    assist = models.IntegerField(default=0, null=True, blank=True)
+    pitchStrike = models.IntegerField(default=0, null=True, blank=True)
+    pitchBall = models.IntegerField(default=0, null=True, blank=True)
+    totalBatterFaced = models.IntegerField(default=0, null=True, blank=0)
+    totalInGameOut = models.IntegerField(default=0, blank=True, null=True) 
+    oppHit = models.IntegerField(default=0, null=True, blank=True)
+    oppRun = models.IntegerField(default=0, blank=True, null=True)
+    earnedRun = models.IntegerField(default=0, blank=True, null=True)
+    oppBaseOnBall = models.IntegerField(default=0, blank=True, null=True)
+    oppStrikeout = models.IntegerField(default=0, blank=True, null=True)
+    hitBatter = models.IntegerField(default=0, blank=True, null=True)
+    balk = models.IntegerField(default=0, blank=True, null=True)
+    wildPitch = models.IntegerField(default=0, blank=True, null=True)
+    oppHomeRun = models.IntegerField(default=0, blank=True, null=True)
+    firstPitchStrike = models.IntegerField(default=0, blank=True, null=True)
+    pickOff = models.IntegerField(default=0, blank=True, null=True)
 
     @property
     def atBat(self):
@@ -400,25 +431,6 @@ class BatterGame(models.Model):
             return '-'
         return "{:.3f}".format(up/down)
     
-class FielderGame(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    currentPos = models.IntegerField(
-        choices=POSITON,
-        blank=True,
-        default=-1,
-    )
-    playedPos = ArrayField(models.IntegerField(
-        choices=POSITON,
-        blank=True,
-        default=-1,
-    ))
-    # totalChance = models.IntegerField(default=0)
-    putOut = models.IntegerField(default=0, null=True, blank=True)
-    assist = models.IntegerField(default=0, null=True, blank=True)
-    error = models.IntegerField(default=0, null=True, blank=True)
-    outfieldAssist = models.IntegerField(default=0, null=True, blank=True)
-
     @property
     def totalChance(self):
         return self.putOut + self.assist + self.error
@@ -430,26 +442,6 @@ class FielderGame(models.Model):
         up = self.putOut + self.assist
         return "{:.3f}".format(up/self.totalChance)
     
-class PitcherGame(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    # pitchCount = models.IntegerField(default=0, null=True, blank=True)
-    pitchBall = models.IntegerField(default=0, null=True, blank=True)
-    pictchStrike = models.IntegerField(default=0, null=True, blank=True)
-    totalBatterFaced = models.IntegerField(default=0, null=True, blank=0)
-    totalInGameOut = models.IntegerField(default=0, blank=True, null=True) 
-    oppHit = models.IntegerField(default=0, null=True, blank=True)
-    oppRun = models.IntegerField(default=0, blank=True, null=True)
-    earnedRun = models.IntegerField(default=0, blank=True, null=True)
-    oppBaseOnBall = models.IntegerField(default=0, blank=True, null=True)
-    oppStrikeout = models.IntegerField(default=0, blank=True, null=True)
-    hitBatter = models.IntegerField(default=0, blank=True, null=True)
-    balk = models.IntegerField(default=0, blank=True, null=True)
-    wildPitch = models.IntegerField(default=0, blank=True, null=True)
-    oppHomeRun = models.IntegerField(default=0, blank=True, null=True)
-    firstPitchStrike = models.IntegerField(default=0, blank=True, null=True)
-    pickOff = models.IntegerField(default=0, blank=True, null=True)
-
     @property
     def earnedRunAvarage(self):
         up = self.earnedRun*self.game.inningERA
@@ -497,7 +489,7 @@ class PitcherGame(models.Model):
     @property
     def pitchCount(self):
         return self.pictchStrike + self.pitchBall
-    
+   
 class Transaction(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -528,31 +520,31 @@ class Equipment(models.Model):
         upload_to="equipments/", default="equipments/equipment.png", blank=True, null=True)
     avatar_str = models.TextField(blank=True, null=True)
 
-class OffensePitchByPitch(models.Model):
-    batter = models.ForeignKey(Player, on_delete=models.CASCADE)
+class AtBat(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    pitch_count = models.IntegerField()
-    ball_count = models.IntegerField()
-    strike_count = models.IntegerField()
-    outcome =  models.IntegerField(
+    teamScore =models.IntegerField(default=0, null=True, blank=True)
+    oppScore = models.IntegerField(default=0, null=True, blank=True)
+    out =  models.IntegerField(default=0, null=True, blank=True)
+    inning =  models.IntegerField(default=1, null=True, blank=True)
+    isTop = models.BooleanField(default=True, null=True, blank=True)
+    ball =  models.IntegerField(default=0, null=True, blank=True)
+    strike =  models.IntegerField(default=0, null=True, blank=True)
+    isOffense =  models.IntegerField(default=0, null=True, blank=True)
+    isRunnerFirstOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_first')
+    isRunnerSecondOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_second')
+    isRunnerThirdOff = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='runner_third')
+    isRunnerFirstDef = models.IntegerField(null=True, blank=True)
+    isRunnerSecondDef = models.IntegerField(null=True, blank=True)
+    isRunnerThirdDef = models.IntegerField(null=True, blank=True)
+    currentPlayer = models.IntegerField(null=True, blank=True, default=1)
+    oppCurPlayer = models.IntegerField(null=True, blank=True, default=1)
+    outcomeType =  models.IntegerField(
         choices=OUTCOME_TYPE,
         blank=True,
         default=1,
     )
     description = models.TextField(blank=True, null=True)
-
-class DefensePitchByPitch(models.Model):
-    pitcher = models.ForeignKey(Player, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    pitch_count = models.IntegerField()
-    ball_count = models.IntegerField()
-    strike_count = models.IntegerField()
-    outcome =  models.IntegerField(
-        choices=OUTCOME_TYPE,
-        blank=True,
-        default=1,
-    )
-    description = models.TextField(blank=True, null=True)
+    currentPitcher = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='current_pitcher')
 
 
 

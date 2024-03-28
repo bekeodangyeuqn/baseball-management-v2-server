@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 from django.core.mail import send_mail
-from .models import JoinRequest, Transaction
+from .models import AtBat, JoinRequest, PlayerGame, Transaction
 from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
@@ -311,6 +311,30 @@ class EquipmentCreate(APIView):
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PlayerGameCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = PlayerGameSerializer(data=request.data)
+        if serializer.is_valid():
+            playergame = serializer.save()
+            if playergame:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AtBatCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, format='json'):
+        serializer = AtBatSerializer(data=request.data)
+        if serializer.is_valid():
+            atbat = serializer.save()
+            if atbat:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -397,3 +421,17 @@ class EquipmentList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Equipment.objects.filter(team=team)
+    
+class AtBatList(generics.ListCreateAPIView):
+    serializer_class = AtBatSerializer
+    
+    def get_queryset(self):
+        game = Game.objects.get(id=self.kwargs['gameid'])
+        return AtBat.objects.filter(game=game)
+    
+class PlayerGameList(generics.ListCreateAPIView):
+    serializer_class = PlayerGameSerializer
+    
+    def get_queryset(self):
+        game = Game.objects.get(id=self.kwargs['gameid'])
+        return PlayerGame.objects.filter(game=game)
