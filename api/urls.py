@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, AtBatList, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameList, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
+from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, GameCreate, GameList, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerList, PlayerProfile, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -40,6 +40,8 @@ urlpatterns = [
      path('game/create/', GameCreate.as_view(), name='game_create'),
      path('transaction/create/', TransactionCreate.as_view(), name='transaction_create'),
      path('equipment/create/', EquipmentCreate.as_view(), name='equipment_create'),
+     path('playergame/create/', PlayerGameCreate.as_view(), name='playergame_create'),
+     path('atbat/create/', AtBatCreate.as_view(), name='atbat_create'),
      path('player/create/', PlayerCreate.as_view(), name='team_create'),
      path('player/import/', ImportPlayerAPIView.as_view(), name='players_import'),
      path('players/team/<int:teamid>/', PlayerList.as_view(), name='player-list'),
