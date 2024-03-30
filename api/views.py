@@ -435,3 +435,27 @@ class PlayerGameList(generics.ListCreateAPIView):
     def get_queryset(self):
         game = Game.objects.get(id=self.kwargs['gameid'])
         return PlayerGame.objects.filter(game=game)
+    
+class GameUpdate(generics.UpdateAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameCreateSerializer
+
+class PlayerUpdate(generics.UpdateAPIView):
+    queryset = Player.objects.all()
+    serializer_class = PlayerDetailSerializer
+
+class EventUpdate(generics.UpdateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+class TransactionUpdate(generics.UpdateAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+class EquipmentUpdate(generics.UpdateAPIView):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
+
+class PlayerGameUpdate(generics.UpdateAPIView):
+    queryset = PlayerGame.objects.all()
+    serializer_class = PlayerGameSerializer
