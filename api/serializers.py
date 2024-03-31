@@ -246,6 +246,33 @@ class GameCreateSerializer(serializers.ModelSerializer):
     opp_score = serializers.ReadOnlyField()
     opp_hit = serializers.ReadOnlyField()
     opp_error = serializers.ReadOnlyField()
+    team_inning_score = serializers.ReadOnlyField()
+    opp_inning_score = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Game
+        fields = '__all__'
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        game = Game.objects.create(oppTeam=validated_data['oppTeam'], oppTeamShort=validated_data['oppTeamShort'], description=validated_data['description'],team_id=validated_data['team_id'], 
+                                     stadium=validated_data['stadium'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], 
+                                     league_id=validated_data['league_id'], inningERA=validated_data['inningERA'])
+        game.save()
+        return game
+    
+class GameSerializer(serializers.ModelSerializer):
+    team_id = serializers.IntegerField()
+    league_id = serializers.IntegerField()
+    id = serializers.SerializerMethodField(read_only=True)
+    team_score = serializers.ReadOnlyField()
+    team_hit = serializers.ReadOnlyField()
+    team_error = serializers.ReadOnlyField()
+    opp_score = serializers.ReadOnlyField()
+    opp_hit = serializers.ReadOnlyField()
+    opp_error = serializers.ReadOnlyField()
 
     class Meta:
         model = Game
@@ -278,6 +305,7 @@ class TransactionSerializer(serializers.ModelSerializer):
                                      type=validated_data['type'], time=validated_data['time'], price=validated_data['price'])
         transaction.save()
         return transaction
+    
     
 class EquipmentSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
@@ -376,6 +404,35 @@ class PlayerGameSerializer(serializers.ModelSerializer):
     def get_id(self, obj):
         return obj.id
     
+class AtBatCreateSerializer(serializers.ModelSerializer):
+    game_id = serializers.IntegerField()
+    isRunnerFirstOff_id = serializers.IntegerField(allow_null=True)
+    isRunnerSecondOff_id = serializers.IntegerField(allow_null=True)
+    isRunnerThirdOff_id = serializers.IntegerField(allow_null=True)
+    currentPitcher_id = serializers.IntegerField(allow_null=True)
+
+    class Meta:
+        model = AtBat
+        fields = [f.name for f in AtBat._meta.get_fields() if f.name not in ['game', 'isRunnerFirstOff', 'isRunnerSecondOff', 
+                                                                             'isRunnerThirdOff', 'currentPitcher']]
+        fields += ['game_id', 'isRunnerFirstOff_id', 'isRunnerSecondOff_id',
+                    'isRunnerThirdOff_id', 'currentPitcher_id', 'id']
+
+    def get_id(self, obj):
+        return obj.id
+    
+    def create(self,validated_data):
+        atBat = AtBat.objects.create(game_id=validated_data['game_id'], isRunnerFirstOff_id=validated_data['isRunnerFirstOff_id'],
+                                     isRunnerSecondOff_id=validated_data['isRunnerSecondOff_id'], isRunnerThirdOff_id=validated_data['isRunnerThirdOff_id'], 
+                                     inning=validated_data['inning'], out=validated_data['out'], ball=validated_data['ball'], strike=validated_data['strike'], 
+                                     teamScore=validated_data['teamScore'], oppScore=validated_data['oppScore'], isTop=validated_data['isTop'], 
+                                     isOffense=validated_data['isOffense'], isRunnerFirstDef=validated_data['isRunnerFirstDef'], isRunnerSecondDef=validated_data['isRunnerSecondDef'], 
+                                     isRunnerThirdDef=validated_data['isRunnerThirdDef'], currentPitcher_id=validated_data['currentPitcher_id'], 
+                                     oppCurPlayer=validated_data['oppCurPlayer'], currentPlayer=validated_data['currentPlayer'], 
+                                     outcomeType=validated_data['outcomeType'], description=validated_data['description'], isLastState=validated_data['isLastState'])
+        atBat.save()
+        return atBat
+    
 class AtBatSerializer(serializers.ModelSerializer):
     game_id = serializers.IntegerField()
     isRunnerFirstOff_id = serializers.IntegerField()
@@ -389,17 +446,5 @@ class AtBatSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return obj.id
-    
-    def create(self,validated_data):
-        atBat = AtBat.objects.create(game_id=validated_data['game_id'], isRunnerFirstOff_id=validated_data['isRunnerFirstOff_id'],
-                                     isRunnerSecondOff_id=validated_data['isRunnerSecondOff_id'], isRunnerThirdOff_id=validated_data['isRunnerThirdOff_id'], 
-                                     inning=validated_data['inning'], out=validated_data['out'], ball=validated_data['ball'], strike=validated_data['strike'], 
-                                     teamScore=validated_data['teamScore'], oppScore=validated_data['oppScore'], isTop=validated_data['isTop'], 
-                                     isOffense=validated_data['isOffense'], isRunnerFirstDef=validated_data['isRunnerFirstDef'], isRunnerSecondDef=validated_data['isRunnerSecondDef'], 
-                                     isRunnerThirdDef=validated_data['isRunnerThirdDef'], currentPitcher_id=validated_data['currentPitcher_id'], 
-                                     oppCurPlayer=validated_data['oppCurPlayer'], currentPlayer=validated_data['currentPlayer'], 
-                                     outcomeType=validated_data['outcomeType'], description=validated_data['description'])
-        atBat.save()
-        return atBat
 
 

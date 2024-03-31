@@ -316,6 +316,19 @@ class Game(models.Model):
         return 0
     
     @property
+    def team_inning_score(self):
+        at_bats = list(AtBat.objects.filter(game=self))
+        max_inning = at_bats[-1].inning if at_bats else 0
+        arr = []
+        if at_bats:
+            for i in range(1, max_inning+1):
+                inning_at_bats = [ab for ab in at_bats if ab.isOffense == 1 and ab.inning == i]
+                inning_scores = [ab.teamScore for ab in inning_at_bats] if inning_at_bats else None
+                inning_score = max(inning_scores) if inning_scores else None
+                arr.append(inning_score)
+        return arr
+    
+    @property
     def opp_score(self):
         pitcher_games = PlayerGame.objects.filter(game=self)
         if pitcher_games:
@@ -338,6 +351,19 @@ class Game(models.Model):
             opp_hits = sum(pitcher_game.oppHit for pitcher_game in pitcher_games)
             return opp_hits
         return 0
+    
+    @property
+    def opp_inning_score(self):
+        at_bats = list(AtBat.objects.filter(game=self))
+        max_inning = at_bats[-1].inning if at_bats else 0
+        arr = []
+        if at_bats:
+            for i in range(1, max_inning+1):
+                inning_at_bats = [ab for ab in at_bats if ab.isOffense == 0 and ab.inning == i]
+                inning_scores = [ab.oppScore for ab in inning_at_bats] if inning_at_bats else None
+                inning_score = max(inning_scores) if inning_scores else None
+                arr.append(inning_score)
+        return arr
 
 class PlayerGame(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
@@ -558,10 +584,11 @@ class AtBat(models.Model):
     outcomeType =  models.IntegerField(
         choices=OUTCOME_TYPE,
         blank=True,
-        default=1,
+        null=True
     )
     description = models.TextField(blank=True, null=True)
     currentPitcher = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='current_pitcher', null=True, blank=True)
+    isLastState = models.BooleanField(default=False, null=True, blank=True)
 
 
 

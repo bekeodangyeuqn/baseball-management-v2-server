@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerList, PlayerProfile, PlayerUpdate, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
+from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerUpdate, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -26,6 +26,8 @@ urlpatterns = [
          EventDelete.as_view(), name="event_delete"),
      path('transaction/profile/<int:pk>/',
          TransactionProfile.as_view(), name="transaction_profile"),
+    path('game/<int:pk>/',
+         GameProfile.as_view(), name="game_profile"),
      path('transaction/delete/<int:pk>/',
          TransactionDelete.as_view(), name="transaction_delete"),
      path('transaction/delete/<int:pk>/',
@@ -56,6 +58,6 @@ urlpatterns = [
      path('player/updates/<int:pk>/', PlayerUpdate.as_view(), name='player-update'),
      path('transaction/updates/<int:pk>/', TransactionUpdate.as_view(), name='transaction-update'),
      path('equipment/updates/<int:pk>/', EquipmentUpdate.as_view(), name='equipment-update'),
-     path('playergame/updates/<int:pk>/', PlayerUpdate.as_view(), name='playergame-update'),
+     path('playergame/updates/<int:pk>/', PlayerGameUpdate.as_view(), name='playergame-update'),
     #  path('', include(router.urls)),
 ]

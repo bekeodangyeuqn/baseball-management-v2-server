@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -328,7 +328,7 @@ class AtBatCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format='json'):
-        serializer = AtBatSerializer(data=request.data)
+        serializer = AtBatCreateSerializer(data=request.data)
         if serializer.is_valid():
             atbat = serializer.save()
             if atbat:
@@ -349,6 +349,10 @@ class TeamProfile(generics.RetrieveAPIView):
 class PlayerProfile(generics.RetrieveAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerDetailSerializer
+
+class GameProfile(generics.RetrieveAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameCreateSerializer
 
 class EventProfile(generics.RetrieveAPIView):
     queryset = Event.objects.all()
@@ -402,7 +406,7 @@ class EventList(generics.ListCreateAPIView):
         return Event.objects.filter(team=team)
     
 class GameList(generics.ListCreateAPIView):
-    serializer_class = GameCreateSerializer
+    serializer_class = GameSerializer
     
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
@@ -458,4 +462,4 @@ class EquipmentUpdate(generics.UpdateAPIView):
 
 class PlayerGameUpdate(generics.UpdateAPIView):
     queryset = PlayerGame.objects.all()
-    serializer_class = PlayerGameSerializer
+    serializer_class = PlayerGameCreateSerializer
