@@ -144,59 +144,73 @@ class JoinRequestSerializer(serializers.ModelSerializer):
 class PlayerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
-    # plateApperance = serializers.ReadOnlyField()
-    # homeRun = serializers.ReadOnlyField()
-    # runBattedIn = serializers.ReadOnlyField()
-    # run = serializers.ReadOnlyField()
-    # single = serializers.ReadOnlyField()
-    # double = serializers.ReadOnlyField()
-    # triple = serializers.ReadOnlyField()
-    # baseOnBall = serializers.ReadOnlyField()
-    # intentionalBB = serializers.ReadOnlyField()
-    # hitByPitch = serializers.ReadOnlyField()
-    # strikeOut = serializers.ReadOnlyField()
-    # fielderChoice = serializers.ReadOnlyField()
-    # sacrificeFly = serializers.ReadOnlyField()
-    # sacrificeBunt = serializers.ReadOnlyField()
-    # stolenBase = serializers.ReadOnlyField()
-    # leftOnBase = serializers.ReadOnlyField()
-    # doublePlay = serializers.ReadOnlyField()
-    # triplePlay = serializers.ReadOnlyField()
-    # onBaseByError = serializers.ReadOnlyField()
-    # putOut = serializers.ReadOnlyField()
-    # assist = serializers.ReadOnlyField()
-    # error = serializers.ReadOnlyField()
-    # totalBatterFaced = serializers.ReadOnlyField()
-    # totalInGameOut = serializers.ReadOnlyField()
-    # oppHit = serializers.ReadOnlyField()
-    # oppRun = serializers.ReadOnlyField()
-    # earnedRun = serializers.ReadOnlyField()
-    # oppBaseOnBall = serializers.ReadOnlyField()
-    # oppStrikeOut = serializers.ReadOnlyField()
-    # hitBatter = serializers.ReadOnlyField()
-    # balk = serializers.ReadOnlyField()
-    # wildPitch = serializers.ReadOnlyField()
-    # oppHomeRun = serializers.ReadOnlyField()
-    # firstPitchStrike = serializers.ReadOnlyField()
-    # pickOff = serializers.ReadOnlyField()
-    # atBat = serializers.ReadOnlyField()
-    # hit = serializers.ReadOnlyField() 
-    # battingAverage = serializers.ReadOnlyField() 
-    # onBasePercentage = serializers.ReadOnlyField() 
-    # sluggingPercentage = serializers.ReadOnlyField()
-    # onBasePlusSlugging = serializers.ReadOnlyField() 
-    # weightedOnBasePercentage = serializers.ReadOnlyField() 
-    # totalChance = serializers.ReadOnlyField()
-    # fieldingPercentace = serializers.ReadOnlyField() 
-    # earnedRunAvarage = serializers.ReadOnlyField() 
-    # walkAndHitPerInning = serializers.ReadOnlyField() 
-    # runnerAllowed = serializers.ReadOnlyField() 
-    # firstPitchStrikePercentage = serializers.ReadOnlyField() 
-    # fieldingIndependentPitching = serializers.ReadOnlyField() 
-
+    plateApperance = serializers.ReadOnlyField()
+    homeRun = serializers.ReadOnlyField()
+    runBattedIn = serializers.ReadOnlyField()
+    run = serializers.ReadOnlyField()
+    single = serializers.ReadOnlyField()
+    double = serializers.ReadOnlyField()
+    triple = serializers.ReadOnlyField()
+    baseOnBall = serializers.ReadOnlyField()
+    intentionalBB = serializers.ReadOnlyField()
+    hitByPitch = serializers.ReadOnlyField()
+    strikeOut = serializers.ReadOnlyField()
+    fielderChoice = serializers.ReadOnlyField()
+    sacrificeFly = serializers.ReadOnlyField()
+    sacrificeBunt = serializers.ReadOnlyField()
+    stolenBase = serializers.ReadOnlyField()
+    leftOnBase = serializers.ReadOnlyField()
+    doublePlay = serializers.ReadOnlyField()
+    triplePlay = serializers.ReadOnlyField()
+    onBaseByError = serializers.ReadOnlyField()
+    putOut = serializers.ReadOnlyField()
+    assist = serializers.ReadOnlyField()
+    error = serializers.ReadOnlyField()
+    totalBatterFaced = serializers.ReadOnlyField()
+    totalInGameOut = serializers.ReadOnlyField()
+    oppHit = serializers.ReadOnlyField()
+    oppRun = serializers.ReadOnlyField()
+    earnedRun = serializers.ReadOnlyField()
+    oppBaseOnBall = serializers.ReadOnlyField()
+    oppStrikeOut = serializers.ReadOnlyField()
+    hitBatter = serializers.ReadOnlyField()
+    balk = serializers.ReadOnlyField()
+    wildPitch = serializers.ReadOnlyField()
+    oppHomeRun = serializers.ReadOnlyField()
+    firstPitchStrike = serializers.ReadOnlyField()
+    pickOff = serializers.ReadOnlyField()
+    atBat = serializers.ReadOnlyField()
+    hit = serializers.ReadOnlyField() 
+    battingAverage = serializers.ReadOnlyField() 
+    onBasePercentage = serializers.ReadOnlyField() 
+    sluggingPercentage = serializers.ReadOnlyField()
+    onBasePlusSlugging = serializers.ReadOnlyField() 
+    weightedOnBasePercentage = serializers.ReadOnlyField() 
+    totalChance = serializers.ReadOnlyField()
+    fieldingPercentace = serializers.ReadOnlyField() 
+    earnedRunAvarage = serializers.ReadOnlyField() 
+    walkAndHitPerInning = serializers.ReadOnlyField() 
+    runnerAllowed = serializers.ReadOnlyField() 
+    firstPitchStrikePercentage = serializers.ReadOnlyField() 
+    fieldingIndependentPitching = serializers.ReadOnlyField()
+    
     class Meta:
         model = Player
-        fields = '__all__'
+        fields =  ['id', 'firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 'avatar',
+                  'height', 'birthDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'email', 
+                  'batHand', 'throwHand', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
+                  'onBasePlusSlugging', 'weightedOnBasePercentage', 'totalChance', 
+                  'fieldingPercentace', 'earnedRunAvarage', 'walkAndHitPerInning', 
+                  'runnerAllowed', 'firstPitchStrikePercentage', 'fieldingIndependentPitching',
+                  'plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
+                  'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
+                  'fielderChoice', 'sacrificeFly', 'sacrificeBunt', 'stolenBase', 
+                  'leftOnBase', 'doublePlay', 'triplePlay', 'onBaseByError', 'putOut', 
+                  'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
+                  'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
+                  'balk', 'wildPitch', 'oppHomeRun', 'firstPitchStrike', 'pickOff', 
+                  'atBat', 'hit']
+
     
     def get_id(self, obj):
         return obj.id
