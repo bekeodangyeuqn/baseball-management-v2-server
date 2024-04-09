@@ -187,8 +187,8 @@ class PlayerDetailSerializer(serializers.ModelSerializer):
     onBasePlusSlugging = serializers.ReadOnlyField() 
     weightedOnBasePercentage = serializers.ReadOnlyField() 
     totalChance = serializers.ReadOnlyField()
-    fieldingPercentace = serializers.ReadOnlyField() 
-    earnedRunAvarage = serializers.ReadOnlyField() 
+    fieldingPercentage = serializers.ReadOnlyField() 
+    earnedRunAverage = serializers.ReadOnlyField() 
     walkAndHitPerInning = serializers.ReadOnlyField() 
     runnerAllowed = serializers.ReadOnlyField() 
     firstPitchStrikePercentage = serializers.ReadOnlyField() 
@@ -200,7 +200,7 @@ class PlayerDetailSerializer(serializers.ModelSerializer):
                   'height', 'birthDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'email', 
                   'batHand', 'throwHand', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
                   'onBasePlusSlugging', 'weightedOnBasePercentage', 'totalChance', 
-                  'fieldingPercentace', 'earnedRunAvarage', 'walkAndHitPerInning', 
+                  'fieldingPercentage', 'earnedRunAverage', 'walkAndHitPerInning', 
                   'runnerAllowed', 'firstPitchStrikePercentage', 'fieldingIndependentPitching',
                   'plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
                   'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 

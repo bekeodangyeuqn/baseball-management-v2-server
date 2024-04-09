@@ -518,7 +518,7 @@ class Player(models.Model):
         return "{:.3f}".format(up/self.totalChance)
     
     @property
-    def earnedRunAvarage(self):
+    def earnedRunAverage(self):
         batter_games = self.games
         if (batter_games):
             up = sum(batter_game.earnedRun*batter_game.game.inningERA*3 for batter_game in batter_games)
