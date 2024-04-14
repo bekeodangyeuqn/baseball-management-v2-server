@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -163,7 +163,7 @@ class TeamCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format='json'):
-        serializer = TeamSerializer(data=request.data)
+        serializer = TeamCreateSerializer(data=request.data)
         if serializer.is_valid():
             team = serializer.save()
             if team:

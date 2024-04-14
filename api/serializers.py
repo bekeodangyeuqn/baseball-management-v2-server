@@ -99,7 +99,7 @@ class CreateManagerSerializer(serializers.ModelSerializer):
         return manager
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamCreateSerializer(serializers.ModelSerializer):
     managers = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField(read_only=True)
     user_id = serializers.IntegerField()
@@ -128,6 +128,16 @@ class TeamSerializer(serializers.ModelSerializer):
         manager.team = team
         manager.save()
         return team
+
+class TeamSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = Team
+        fields = ('name', 'shortName', 'city', 'country',
+                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'id', 'teamFund')
+        def get_id(self, obj):
+            return obj.id
+
     
 class JoinRequestSerializer(serializers.ModelSerializer):
     manager_id = serializers.IntegerField()
