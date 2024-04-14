@@ -31,6 +31,7 @@ import random
 from .utils import token_generator
 from django.views import View
 from django.views.generic import TemplateView
+from rest_framework.pagination import PageNumberPagination
 
 # initializing size of string
 N = 24
@@ -170,9 +171,15 @@ class TeamCreate(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class TeamListPagination(PageNumberPagination):
+    page_size = 10
+    page_query_param = 'page'
+    max_page_size = 1000
+
 class TeamListView(generics.ListAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    pagination_class = TeamListPagination
 
 class PlayerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
