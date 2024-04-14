@@ -135,8 +135,8 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ('name', 'shortName', 'city', 'country',
                   'homeStadium', 'foundedDate', 'logo_str', 'logo', 'id', 'teamFund')
-        def get_id(self, obj):
-            return obj.id
+    def get_id(self, obj):
+        return obj.id
 
     
 class JoinRequestSerializer(serializers.ModelSerializer):
