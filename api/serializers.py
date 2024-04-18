@@ -266,7 +266,9 @@ class PlayerAvatarSerializer(serializers.ModelSerializer):
 class PlayerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ('firstName', 'lastName', 'jerseyNumber', 'firstPos', 'secondPos', 'avatar','id', 'status')
+        fields = ('id', 'firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 'avatar',
+                  'height', 'birthDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'email', 'status',
+                  'batHand', 'throwHand')
 
 class ManagerListSerializer(serializers.ModelSerializer):
     class Meta:
