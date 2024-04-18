@@ -42,6 +42,12 @@ STATUS = (
     (1, "Completed"),
 )
 
+PLAYER_STATUS = (
+    (-1, "Quited"),
+    (0, "Inactive"),
+    (1, "Active"),
+)
+
 EMAIL_SEND = (
     (-1, "False"),
     (0, "Pending"),
@@ -171,6 +177,12 @@ class Player(models.Model):
         max_length=1,
         blank=True,
         null=True
+    )
+    status = models.IntegerField(
+        choices=PLAYER_STATUS,
+        default=1,
+        null=True,
+        blank=True
     )
 
     @property
