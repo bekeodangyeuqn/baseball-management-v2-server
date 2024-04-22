@@ -72,8 +72,8 @@ class UpdatePushToken(generics.UpdateAPIView):
     serializer_class = UserPushTokenSerializer
 
     def get_object(self):
-        user_id = self.kwargs.get('user_id')
-        return get_object_or_404(UserPushToken, user__id=user_id)
+        manager_id = self.kwargs.get('manager_id')
+        return get_object_or_404(UserPushToken, manager__id=manager_id)
 
 class PushTokenList(generics.ListAPIView):
     serializer_class = UserPushTokenSerializer

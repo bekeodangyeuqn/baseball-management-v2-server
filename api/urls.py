@@ -60,7 +60,7 @@ urlpatterns = [
      path('equipment/updates/<int:pk>/', EquipmentUpdate.as_view(), name='equipment-update'),
      path('playergame/updates/<int:pk>/', PlayerGameUpdate.as_view(), name='playergame-update'),
      path('userpushtoken/seed/', SeedPushToken.as_view(), name='userpushtoken-seed'),
-     path('userpushtoken/update/<int:user_id>/', UpdatePushToken.as_view(), name='userpushtoken-update'),
+     path('userpushtoken/update/<int:manager_id>/', UpdatePushToken.as_view(), name='userpushtoken-update'),
      path('userpushtokens/<int:team_id>/', PushTokenList.as_view(), name='push-token-list'),
     #  path('', include(router.urls)),
 ]
