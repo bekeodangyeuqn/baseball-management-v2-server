@@ -77,6 +77,14 @@ class UpdatePushToken(generics.UpdateAPIView):
         user_id = self.kwargs.get('user_id')
         return get_object_or_404(UserPushToken, user__id=user_id)
 
+class PushTokenList(generics.ListAPIView):
+    serializer_class = UserPushTokenSerializer
+
+    def get_queryset(self):
+        team_id = self.kwargs.get('team_id')
+        team = get_object_or_404(Team, id=team_id)
+        return UserPushToken.objects.filter(user__team=team)
+    
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
