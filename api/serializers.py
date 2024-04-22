@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
+from .models import UserPushToken, AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -98,7 +98,13 @@ class CreateManagerSerializer(serializers.ModelSerializer):
         manager.save()
         return manager
 
-
+class UserPushTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =  UserPushToken
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        userToken = UserPushToken.objects.create(user_id=validated_data['user_id'], push_token=validated_data['push_token'])
 class TeamCreateSerializer(serializers.ModelSerializer):
     managers = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField(read_only=True)

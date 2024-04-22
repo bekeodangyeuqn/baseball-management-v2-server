@@ -1,10 +1,10 @@
 import datetime
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,7 +21,7 @@ from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from .models import Event, Game, Manager, Player, Team, Equipment
+from .models import Event, Game, Manager, Player, Team, Equipment, UserPushToken
 import pandas as pd
 import numpy as np
 import base64
@@ -54,9 +54,28 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 json = serializer.data
+                userPushToken = UserPushToken.objects.create(user=user, push_token=None)
+                userPushToken.save()
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class SeedPushToken(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+    def post(self, request, *args, **kwargs):
+        users = User.objects.all()
+        for user in users:
+            userPushToken = UserPushToken.objects.create(user=user, push_token=None)
+            userPushToken.save()
+        return Response({"message": "Push tokens seeded successfully."}, status=status.HTTP_200_OK)
+
+class UpdatePushToken(generics.UpdateAPIView):
+    queryset = UserPushToken.objects.all()
+    serializer_class = UserPushTokenSerializer
+
+    def get_object(self):
+        user_id = self.kwargs.get('user_id')
+        return get_object_or_404(UserPushToken, user__id=user_id)
 
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
