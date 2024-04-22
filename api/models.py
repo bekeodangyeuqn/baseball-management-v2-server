@@ -140,7 +140,7 @@ class JoinRequest(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
 class UserPushToken(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE, default=None)
     push_token = models.TextField(blank=True, null=True)
 
 class Player(models.Model):

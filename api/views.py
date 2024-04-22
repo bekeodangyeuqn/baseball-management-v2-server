@@ -54,8 +54,6 @@ class UserCreate(APIView):
             user = serializer.save()
             if user:
                 json = serializer.data
-                userPushToken = UserPushToken.objects.create(user=user, push_token=None)
-                userPushToken.save()
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,9 +61,9 @@ class SeedPushToken(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
     def post(self, request, *args, **kwargs):
-        users = User.objects.all()
+        users = Manager.objects.all()
         for user in users:
-            userPushToken = UserPushToken.objects.create(user=user, push_token=None)
+            userPushToken = UserPushToken.objects.create(manager=user, push_token=None)
             userPushToken.save()
         return Response({"message": "Push tokens seeded successfully."}, status=status.HTTP_200_OK)
 
@@ -83,7 +81,7 @@ class PushTokenList(generics.ListAPIView):
     def get_queryset(self):
         team_id = self.kwargs.get('team_id')
         team = get_object_or_404(Team, id=team_id)
-        return UserPushToken.objects.filter(user__team=team)
+        return UserPushToken.objects.filter(manager__team=team)
     
 class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -114,6 +112,8 @@ class ManagerCreate(APIView):
             manager = serializer.save()
             if manager:
                 json = serializer.data
+                userPushToken = UserPushToken.objects.create(manager=manager, push_token=None)
+                userPushToken.save()
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
