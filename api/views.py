@@ -63,7 +63,7 @@ class SeedPushToken(APIView):
     def post(self, request, *args, **kwargs):
         users = Manager.objects.all()
         for user in users:
-            userPushToken = UserPushToken.objects.create(manage=user, push_token=None)
+            userPushToken = UserPushToken.objects.create(manager=user, push_token=None)
             userPushToken.save()
         return Response({"message": "Push tokens seeded successfully."}, status=status.HTTP_200_OK)
 
