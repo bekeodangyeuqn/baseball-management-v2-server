@@ -105,6 +105,8 @@ class UserPushTokenSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         userToken = UserPushToken.objects.create(manager_id=validated_data['manager_id'], push_token=validated_data['push_token'])
+        userToken.save()
+        return userToken
 class TeamCreateSerializer(serializers.ModelSerializer):
     managers = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField(read_only=True)
