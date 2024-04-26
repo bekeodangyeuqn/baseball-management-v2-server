@@ -492,6 +492,9 @@ class AtBatCreateSerializer(serializers.ModelSerializer):
     isRunnerSecondOff_id = serializers.IntegerField(allow_null=True)
     isRunnerThirdOff_id = serializers.IntegerField(allow_null=True)
     currentPitcher_id = serializers.IntegerField(allow_null=True)
+    pitcherResponseFirst_id = serializers.IntegerField(allow_null=True)
+    pitcherResponseSecond_id = serializers.IntegerField(allow_null=True)
+    pitcherResponseThird_id = serializers.IntegerField(allow_null=True)
 
     class Meta:
         model = AtBat
