@@ -435,7 +435,7 @@ class PlayerGameCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayerGame
-        fields = [f.name for f in PlayerGame._meta.get_fields() if f.name not in ['game', 'player', 'runner_first', 'runner_second', 'runner_third', 'current_pitcher']]
+        fields = [f.name for f in PlayerGame._meta.get_fields() if f.name not in ['game', 'player', 'runner_first', 'runner_second', 'runner_third', 'current_pitcher', 'pitch_first', 'pitch_second', 'pitch_third']]
         fields += ['game_id', 'player_id', 'id']
         
 
