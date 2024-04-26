@@ -498,7 +498,8 @@ class AtBatCreateSerializer(serializers.ModelSerializer):
         fields = [f.name for f in AtBat._meta.get_fields() if f.name not in ['game', 'isRunnerFirstOff', 'isRunnerSecondOff', 
                                                                              'isRunnerThirdOff', 'currentPitcher']]
         fields += ['game_id', 'isRunnerFirstOff_id', 'isRunnerSecondOff_id',
-                    'isRunnerThirdOff_id', 'currentPitcher_id', 'id']
+                    'isRunnerThirdOff_id', 'currentPitcher_id', 'id', 'pitcherResponseFirst_id',
+                    'pitcherResponseSecond_id', 'pitcherResponseThird_id']
 
     def get_id(self, obj):
         return obj.id
@@ -510,7 +511,9 @@ class AtBatCreateSerializer(serializers.ModelSerializer):
                                      teamScore=validated_data['teamScore'], oppScore=validated_data['oppScore'], isTop=validated_data['isTop'], 
                                      isOffense=validated_data['isOffense'], isRunnerFirstDef=validated_data['isRunnerFirstDef'], isRunnerSecondDef=validated_data['isRunnerSecondDef'], 
                                      isRunnerThirdDef=validated_data['isRunnerThirdDef'], currentPitcher_id=validated_data['currentPitcher_id'], 
-                                     oppCurPlayer=validated_data['oppCurPlayer'], currentPlayer=validated_data['currentPlayer'], 
+                                     oppCurPlayer=validated_data['oppCurPlayer'], currentPlayer=validated_data['currentPlayer'],
+                                     pitcherResponseFirst_id=validated_data['pitcherResponseFirst_id'], pitcherResponseSecond_id=validated_data['pitcherResponseSecond_id'],
+                                     pitcherResponseThird_id=validated_data['pitcherResponseThird_id'], 
                                      outcomeType=validated_data['outcomeType'], description=validated_data['description'], isLastState=validated_data['isLastState'])
         atBat.save()
         return atBat
@@ -521,6 +524,9 @@ class AtBatSerializer(serializers.ModelSerializer):
     isRunnerSecondOff_id = serializers.IntegerField()
     isRunnerThirdOff_id = serializers.IntegerField()
     currentPitcher_id = serializers.IntegerField()
+    pitcherResponseFirst_id = serializers.IntegerField()
+    pitcherResponseSecond_id = serializers.IntegerField()
+    pitcherResponseThird_id = serializers.IntegerField()
 
     class Meta:
         model = AtBat

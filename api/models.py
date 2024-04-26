@@ -993,6 +993,10 @@ class AtBat(models.Model):
     description = models.TextField(blank=True, null=True)
     currentPitcher = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='current_pitcher', null=True, blank=True)
     isLastState = models.BooleanField(default=False, null=True, blank=True)
+    pitcherResponseFirst = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='pitch_first', null=True, blank=True)
+    pitcherResponseSecond = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='pitch_second', null=True, blank=True)
+    pitcherResponseThird = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='pitch_third', null=True, blank=True)
+    
 
 
 
