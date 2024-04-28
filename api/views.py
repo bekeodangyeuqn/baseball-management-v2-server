@@ -32,7 +32,8 @@ from .utils import token_generator
 from django.views import View
 from django.views.generic import TemplateView
 from rest_framework.pagination import PageNumberPagination
-
+import os
+import string
 # initializing size of string
 N = 24
 
@@ -143,7 +144,8 @@ class JoinTeamRequest(APIView):
             activate_url = "http://" + domain + link
             email_subject = "Yêu cầu trở thành nhà quản lý"
             email_message = "Đây là email từ Baseball management app"
-            with open('email.html', 'r') as f:
+            email_template_path = os.path.join(os.path.dirname(__file__), 'email.html')
+            with open(email_template_path, 'r') as f:
                 email_template = string.Template(f.read())
             email_body = email_template.substitute(
             firstName=join_request.manager.firstName,
