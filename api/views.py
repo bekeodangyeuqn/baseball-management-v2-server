@@ -143,7 +143,7 @@ class JoinTeamRequest(APIView):
             activate_url = "http://" + domain + link
             email_subject = "Yêu cầu trở thành nhà quản lý"
             email_message = "Đây là email từ Baseball management app"
-            with open('../templates/email.html', 'r') as f:
+            with open('email.html', 'r') as f:
                 email_template = string.Template(f.read())
             email_body = email_template.substitute(
             firstName=join_request.manager.firstName,
