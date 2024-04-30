@@ -314,20 +314,38 @@ class PlayerListStatSerializer(serializers.ModelSerializer):
     balk = serializers.ReadOnlyField()
     wildPitch = serializers.ReadOnlyField()
     oppHomeRun = serializers.ReadOnlyField()
+    firstPitchStrike = serializers.ReadOnlyField()
     pickOff = serializers.ReadOnlyField()
+    atBat = serializers.ReadOnlyField()
     hit = serializers.ReadOnlyField() 
-    earnedRun = serializers.ReadOnlyField() 
+    battingAverage = serializers.ReadOnlyField() 
+    onBasePercentage = serializers.ReadOnlyField() 
+    sluggingPercentage = serializers.ReadOnlyField()
+    onBasePlusSlugging = serializers.ReadOnlyField() 
+    weightedOnBasePercentage = serializers.ReadOnlyField() 
+    totalChance = serializers.ReadOnlyField()
+    fieldingPercentage = serializers.ReadOnlyField() 
+    earnedRunAverage = serializers.ReadOnlyField() 
+    walkAndHitPerInning = serializers.ReadOnlyField() 
+    runnerAllowed = serializers.ReadOnlyField() 
+    firstPitchStrikePercentage = serializers.ReadOnlyField() 
+    fieldingIndependentPitching = serializers.ReadOnlyField()
 
     class Meta:
         model = Player
-        fields =  ['id', 'team_id', 
+        fields =  ['id', 'firstName', 'lastName', 'team_id', 'firstPos', 'secondPos', 'weight', 'avatar',
+                  'height', 'birthDate', 'homeTown', 'jerseyNumber', 'phoneNumber', 'email', 'status',
+                  'batHand', 'throwHand', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
+                  'onBasePlusSlugging', 'weightedOnBasePercentage', 'totalChance', 
+                  'fieldingPercentage', 'earnedRunAverage', 'walkAndHitPerInning', 
+                  'runnerAllowed', 'firstPitchStrikePercentage', 'fieldingIndependentPitching',
                   'plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
                   'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
                   'fielderChoice', 'sacrificeFly', 'sacrificeBunt', 'stolenBase', 
                   'leftOnBase', 'doublePlay', 'triplePlay', 'onBaseByError', 'putOut', 
                   'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
                   'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
-                  'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
+                  'balk', 'wildPitch', 'oppHomeRun', 'firstPitchStrike', 'pickOff', 
                   'atBat', 'hit']
 
     
