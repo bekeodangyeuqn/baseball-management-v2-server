@@ -229,13 +229,14 @@ class Player(models.Model):
     #     return 0
     double = models.IntegerField(default=0)
     
-    @property
-    def triple(self):
-        batter_games = self.games
-        if batter_games:
-            triples = sum(batter_game.triple for batter_game in batter_games)
-            return triples
-        return 0
+    # @property
+    # def triple(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         triples = sum(batter_game.triple for batter_game in batter_games)
+    #         return triples
+    #     return 0
+    triple = models.IntegerField(default=0)
     
     # @property
     # def homeRun(self):
