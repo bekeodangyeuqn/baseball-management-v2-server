@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
+from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -22,8 +22,12 @@ urlpatterns = [
      path('teams/', TeamListView.as_view(), name='teams'),
      path('event/profile/<int:pk>/',
          EventProfile.as_view(), name="event_profile"),
-     path('event/profile/<int:pk>/',
+     path('event/delete/<int:pk>/',
          EventDelete.as_view(), name="event_delete"),
+     path('league/profile/<int:pk>/',
+         LeagueProfile.as_view(), name="league_profile"),
+     path('league/delete/<int:pk>/',
+         LeagueDelete.as_view(), name="league_delete"),
      path('transaction/profile/<int:pk>/',
          TransactionProfile.as_view(), name="transaction_profile"),
     path('game/<int:pk>/',
@@ -39,6 +43,7 @@ urlpatterns = [
      path('managers/team/<int:teamid>/', ManagerList.as_view(), name='player-list'),
      path('team/create/', TeamCreate.as_view(), name='team_create'),
      path('event/create/', EventCreate.as_view(), name='event_create'),
+     path('league/create/', LeagueCreate.as_view(), name='league_create'),
      path('game/create/', GameCreate.as_view(), name='game_create'),
      path('transaction/create/', TransactionCreate.as_view(), name='transaction_create'),
      path('equipment/create/', EquipmentCreate.as_view(), name='equipment_create'),
@@ -48,6 +53,7 @@ urlpatterns = [
      path('player/import/', ImportPlayerAPIView.as_view(), name='players_import'),
      path('players/team/<int:teamid>/', PlayerList.as_view(), name='player-list'),
      path('events/team/<int:teamid>/', EventList.as_view(), name='event-list'),
+     path('leagues/team/<int:teamid>/', LeagueList.as_view(), name='league-list'),
      path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
      path('transactions/team/<int:teamid>/', TransactionList.as_view(), name='transaction-list'),
      path('equipments/team/<int:teamid>/', EquipmentList.as_view(), name='equipment-list'),
@@ -55,6 +61,7 @@ urlpatterns = [
      path('atbats/game/<int:gameid>/', AtBatList.as_view(), name='atbat-list'),
      path('game/updates/<int:pk>/', GameUpdate.as_view(), name='game-update'),
      path('event/updates/<int:pk>/', EventUpdate.as_view(), name='event-update'),
+     path('league/updates/<int:pk>/', LeagueUpdate.as_view(), name='event-update'),
      path('player/updates/<int:pk>/', PlayerUpdate.as_view(), name='player-update'),
      path('transaction/updates/<int:pk>/', TransactionUpdate.as_view(), name='transaction-update'),
      path('equipment/updates/<int:pk>/', EquipmentUpdate.as_view(), name='equipment-update'),
