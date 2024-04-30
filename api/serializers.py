@@ -315,7 +315,6 @@ class PlayerListStatSerializer(serializers.ModelSerializer):
     wildPitch = serializers.ReadOnlyField()
     oppHomeRun = serializers.ReadOnlyField()
     pickOff = serializers.ReadOnlyField()
-    atBat = serializers.ReadOnlyField()
     hit = serializers.ReadOnlyField() 
     earnedRun = serializers.ReadOnlyField() 
 

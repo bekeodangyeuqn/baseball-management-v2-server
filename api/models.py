@@ -977,7 +977,7 @@ class PlayerGame(models.Model):
                     'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
                     'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
                     'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
-                    'atBat', 'hit']
+                ]   
             for field in fields:
                 diff = getattr(self, field) - getattr(old_self, field)
                 setattr(self.player, field, getattr(self.player, field) + diff)
