@@ -193,37 +193,41 @@ class Player(models.Model):
     def games(self):
         return PlayerGame.objects.filter(player=self)
 
-    @property
-    def plateApperance(self):
-        batter_games = self.games
-        if batter_games:
-            plateApperances = sum(batter_game.plateApperance for batter_game in batter_games)
-            return plateApperances
-        return 0
+    # @property
+    # def plateApperance(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         plateApperances = sum(batter_game.plateApperance for batter_game in batter_games)
+    #         return plateApperances
+    #     return 0
+    plateApperance = models.IntegerField(default=0)
     
-    @property
-    def runBattedIn(self):
-        batter_games = self.games
-        if batter_games:
-            runBattedIns = sum(batter_game.runBattedIn for batter_game in batter_games)
-            return runBattedIns
-        return 0
+    # @property
+    # def runBattedIn(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         runBattedIns = sum(batter_game.runBattedIn for batter_game in batter_games)
+    #         return runBattedIns
+    #     return 0
+    runBattedIn = models.IntegerField(default=0)
     
-    @property
-    def single(self):
-        batter_games = self.games
-        if batter_games:
-            singles = sum(batter_game.single for batter_game in batter_games)
-            return singles
-        return 0
+    # @property
+    # def single(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         singles = sum(batter_game.single for batter_game in batter_games)
+    #         return singles
+    #     return 0
+    single = models.IntegerField(default=0)
     
-    @property
-    def double(self):
-        batter_games = self.games
-        if batter_games:
-            doubles = sum(batter_game.double for batter_game in batter_games)
-            return doubles
-        return 0
+    # @property
+    # def double(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         doubles = sum(batter_game.double for batter_game in batter_games)
+    #         return doubles
+    #     return 0
+    double = models.IntegerField(default=0)
     
     @property
     def triple(self):
@@ -233,244 +237,275 @@ class Player(models.Model):
             return triples
         return 0
     
-    @property
-    def homeRun(self):
-        batter_games = self.games
-        if batter_games:
-            homeRuns = sum(batter_game.homeRun for batter_game in batter_games)
-            return homeRuns
-        return 0
+    # @property
+    # def homeRun(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         homeRuns = sum(batter_game.homeRun for batter_game in batter_games)
+    #         return homeRuns
+    #     return 0
+    homeRun = models.IntegerField(default=0)
     
-    @property
-    def baseOnBall(self):
-        batter_games = self.games
-        if batter_games:
-            baseOnBalls = sum(batter_game.baseOnBall for batter_game in batter_games)
-            return baseOnBalls
-        return 0
+    # @property
+    # def baseOnBall(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         baseOnBalls = sum(batter_game.baseOnBall for batter_game in batter_games)
+    #         return baseOnBalls
+    #     return 0
+    baseOnBall = models.IntegerField(default=0)
     
-    @property
-    def intentionalBB(self):
-        batter_games = self.games
-        if batter_games:
-            intentionalBBs = sum(batter_game.intentionalBB for batter_game in batter_games)
-            return intentionalBBs
-        return 0
+    # @property
+    # def intentionalBB(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         intentionalBBs = sum(batter_game.intentionalBB for batter_game in batter_games)
+    #         return intentionalBBs
+    #     return 0
+    intentionalBB = models.IntegerField(default=0)
 
-    @property
-    def hitByPitch(self):
-        batter_games = self.games
-        if batter_games:
-            hitByPitchs = sum(batter_game.hitByPitch for batter_game in batter_games)
-            return hitByPitchs
-        return 0
-    @property
-    def strikeOut(self):
-        batter_games = self.games
-        if batter_games:
-            strikeOuts = sum(batter_game.strikeOut for batter_game in batter_games)
-            return strikeOuts
-        return 0
+    # @property
+    # def hitByPitch(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         hitByPitchs = sum(batter_game.hitByPitch for batter_game in batter_games)
+    #         return hitByPitchs
+    #     return 0
+    hitByPitch = models.IntegerField(default=0)
     
-    @property
-    def fielderChoice(self):
-        batter_games = self.games
-        if batter_games:
-            fielderChoices = sum(batter_game.fielderChoice for batter_game in batter_games)
-            return fielderChoices
-        return 0
+    # @property
+    # def strikeOut(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         strikeOuts = sum(batter_game.strikeOut for batter_game in batter_games)
+    #         return strikeOuts
+    #     return 0
+    strikeOut = models.IntegerField(default=0)
     
-    @property
-    def sacrificeFly(self):
-        batter_games = self.games
-        if batter_games:
-            sacrificeFlys = sum(batter_game.sacrificeFly for batter_game in batter_games)
-            return sacrificeFlys
-        return 0
+    # @property
+    # def fielderChoice(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         fielderChoices = sum(batter_game.fielderChoice for batter_game in batter_games)
+    #         return fielderChoices
+    #     return 0
+    fielderChoice = models.IntegerField(default=0)
     
-    @property
-    def sacrificeBunt(self):
-        batter_games = self.games
-        if batter_games:
-            sacrificeBunts = sum(batter_game.sacrificeBunt for batter_game in batter_games)
-            return sacrificeBunts
-        return 0
+    # @property
+    # def sacrificeFly(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         sacrificeFlys = sum(batter_game.sacrificeFly for batter_game in batter_games)
+    #         return sacrificeFlys
+    #     return 0
+    sacrificeFly = models.IntegerField(default=0)
     
-    @property
-    def stolenBase(self):
-        batter_games = self.games
-        if batter_games:
-            stolenBases = sum(batter_game.stolenBase for batter_game in batter_games)
-            return stolenBases
-        return 0
+    # @property
+    # def sacrificeBunt(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         sacrificeBunts = sum(batter_game.sacrificeBunt for batter_game in batter_games)
+    #         return sacrificeBunts
+    #     return 0
+    sacrificeBunt = models.IntegerField(default=0)
     
-    @property
-    def leftOnBase(self):
-        batter_games = self.games
-        if batter_games:
-            leftOnBases = sum(batter_game.leftOnBase for batter_game in batter_games)
-            return leftOnBases
-        return 0
+    # @property
+    # def stolenBase(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         stolenBases = sum(batter_game.stolenBase for batter_game in batter_games)
+    #         return stolenBases
+    #     return 0
+    stolenBase = models.IntegerField(default=0)
     
-    @property
-    def doublePlay(self):
-        batter_games = self.games
-        if batter_games:
-            doublePlays = sum(batter_game.doublePlay for batter_game in batter_games)
-            return doublePlays
-        return 0
+    # @property
+    # def leftOnBase(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         leftOnBases = sum(batter_game.leftOnBase for batter_game in batter_games)
+    #         return leftOnBases
+    #     return 0
+    leftOnBase = models.IntegerField(default=0)
     
-    @property
-    def triplePlay(self):
-        batter_games = self.games
-        if batter_games:
-            triplePlays = sum(batter_game.triplePlay for batter_game in batter_games)
-            return triplePlays
-        return 0
+    # @property
+    # def doublePlay(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         doublePlays = sum(batter_game.doublePlay for batter_game in batter_games)
+    #         return doublePlays
+    #     return 0
+    doublePlay = models.IntegerField(default=0)
     
-    @property
-    def run(self):
-        batter_games = self.games
-        if batter_games:
-            runs = sum(batter_game.run for batter_game in batter_games)
-            return runs
-        return 0
+    # @property
+    # def triplePlay(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         triplePlays = sum(batter_game.triplePlay for batter_game in batter_games)
+    #         return triplePlays
+    #     return 0
+    triplePlay = models.IntegerField(default=0)
     
-    @property
-    def onBaseByError(self):
-        batter_games = self.games
-        if batter_games:
-            onBaseByErrors = sum(batter_game.onBaseByError for batter_game in batter_games)
-            return onBaseByErrors
-        return 0
+    # @property
+    # def run(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         runs = sum(batter_game.run for batter_game in batter_games)
+    #         return runs
+    #     return 0
+    run = models.IntegerField(default=0)
     
-    @property
-    def putOut(self):
-        batter_games = self.games
-        if batter_games:
-            putOuts = sum(batter_game.putOut for batter_game in batter_games)
-            return putOuts
-        return 0
+    # @property
+    # def onBaseByError(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         onBaseByErrors = sum(batter_game.onBaseByError for batter_game in batter_games)
+    #         return onBaseByErrors
+    #     return 0
+    onBaseByError = models.IntegerField(default=0)
     
-    @property
-    def assist(self):
-        batter_games = self.games
-        if batter_games:
-            assists = sum(batter_game.assist for batter_game in batter_games)
-            return assists
-        return 0
+    # @property
+    # def putOut(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         putOuts = sum(batter_game.putOut for batter_game in batter_games)
+    #         return putOuts
+    #     return 0
+    putOut = models.IntegerField(default=0)
     
-    @property
-    def error(self):
-        batter_games = self.games
-        if batter_games:
-            errors = sum(batter_game.error for batter_game in batter_games)
-            return errors
-        return 0
+    # @property
+    # def assist(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         assists = sum(batter_game.assist for batter_game in batter_games)
+    #         return assists
+    #     return 0
+    assist = models.IntegerField(default=0)
     
-    @property
-    def totalInGameOut(self):
-        batter_games = self.games
-        if batter_games:
-            totalInGameOuts = sum(batter_game.totalInGameOut for batter_game in batter_games)
-            return totalInGameOuts
-        return 0
+    # @property
+    # def error(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         errors = sum(batter_game.error for batter_game in batter_games)
+    #         return errors
+    #     return 0
+    error = models.IntegerField(default=0)
     
-    @property
-    def totalBatterFaced(self):
-        batter_games = self.games
-        if batter_games:
-            totalBatterFaceds = sum(batter_game.totalBatterFaced for batter_game in batter_games)
-            return totalBatterFaceds
-        return 0
+    # @property
+    # def totalInGameOut(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         totalInGameOuts = sum(batter_game.totalInGameOut for batter_game in batter_games)
+    #         return totalInGameOuts
+    #     return 0
+    totalInGameOut = models.IntegerField(default=0)
     
-    @property
-    def oppHit(self):
-        batter_games = self.games
-        if batter_games:
-            oppHits = sum(batter_game.oppHit for batter_game in batter_games)
-            return oppHits
-        return 0
+    # @property
+    # def totalBatterFaced(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         totalBatterFaceds = sum(batter_game.totalBatterFaced for batter_game in batter_games)
+    #         return totalBatterFaceds
+    #     return 0
+    totalBatterFaced = models.IntegerField(default=0)
     
-    @property
-    def oppRun(self):
-        batter_games = self.games
-        if batter_games:
-            oppRuns = sum(batter_game.oppRun for batter_game in batter_games)
-            return oppRuns
-        return 0
+    # @property
+    # def oppHit(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         oppHits = sum(batter_game.oppHit for batter_game in batter_games)
+    #         return oppHits
+    #     return 0
+    oppHit = models.IntegerField(default=0)
     
-    @property
-    def earnedRun(self):
-        batter_games = self.games
-        if batter_games:
-            earnedRuns = sum(batter_game.earnedRun for batter_game in batter_games)
-            return earnedRuns
-        return 0
+    # @property
+    # def oppRun(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         oppRuns = sum(batter_game.oppRun for batter_game in batter_games)
+    #         return oppRuns
+    #     return 0
+    oppRun = models.IntegerField(default=0)
     
-    @property
-    def oppBaseOnBall(self):
-        batter_games = self.games
-        if batter_games:
-            oppBaseOnBalls = sum(batter_game.oppBaseOnBall for batter_game in batter_games)
-            return oppBaseOnBalls
-        return 0
+    # @property
+    # def earnedRun(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         earnedRuns = sum(batter_game.earnedRun for batter_game in batter_games)
+    #         return earnedRuns
+    #     return 0
+    earnedRun = models.IntegerField(default=0)
     
-    @property
-    def oppStrikeOut(self):
-        batter_games = self.games
-        if batter_games:
-            oppStrikeOuts = sum(batter_game.oppStrikeOut for batter_game in batter_games)
-            return oppStrikeOuts
-        return 0
+    # @property
+    # def oppBaseOnBall(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         oppBaseOnBalls = sum(batter_game.oppBaseOnBall for batter_game in batter_games)
+    #         return oppBaseOnBalls
+    #     return 0
+    oppBaseOnBall = models.IntegerField(default=0)
     
-    @property
-    def hitBatter(self):
-        batter_games = self.games
-        if batter_games:
-            hitBatters = sum(batter_game.hitBatter for batter_game in batter_games)
-            return hitBatters
-        return 0
+    # @property
+    # def oppStrikeOut(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         oppStrikeOuts = sum(batter_game.oppStrikeOut for batter_game in batter_games)
+    #         return oppStrikeOuts
+    #     return 0
+    oppStrikeOut = models.IntegerField(default=0)
     
-    @property
-    def balk(self):
-        batter_games = self.games
-        if batter_games:
-            balks = sum(batter_game.balk for batter_game in batter_games)
-            return balks
-        return 0
+    # @property
+    # def hitBatter(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         hitBatters = sum(batter_game.hitBatter for batter_game in batter_games)
+    #         return hitBatters
+    #     return 0
+    hitBatter = models.IntegerField(default=0)
     
-    @property
-    def wildPitch(self):
-        batter_games = self.games
-        if batter_games:
-            wildPitchs = sum(batter_game.wildPitch for batter_game in batter_games)
-            return wildPitchs
-        return 0
+    # @property
+    # def balk(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         balks = sum(batter_game.balk for batter_game in batter_games)
+    #         return balks
+    #     return 0
+    balk = models.IntegerField(default=0)
     
-    @property
-    def oppHomeRun(self):
-        batter_games = self.games
-        if batter_games:
-            oppHomeRuns = sum(batter_game.oppHomeRun for batter_game in batter_games)
-            return oppHomeRuns
-        return 0
+    # @property
+    # def wildPitch(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         wildPitchs = sum(batter_game.wildPitch for batter_game in batter_games)
+    #         return wildPitchs
+    #     return 0
+    wildPitch = models.IntegerField(default=0)
     
-    @property
-    def firstPitchStrike(self):
-        batter_games = self.games
-        if batter_games:
-            firstPitchStrikes = sum(batter_game.firstPitchStrike for batter_game in batter_games)
-            return firstPitchStrikes
-        return 0
+    # @property
+    # def oppHomeRun(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         oppHomeRuns = sum(batter_game.oppHomeRun for batter_game in batter_games)
+    #         return oppHomeRuns
+    #     return 0
+    oppHomeRun = models.IntegerField(default=0)
     
-    @property
-    def pickOff(self):
-        batter_games = self.games
-        if batter_games:
-            pickOffs = sum(batter_game.pickOff for batter_game in batter_games)
-            return pickOffs
-        return 0
+    # @property
+    # def firstPitchStrike(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         firstPitchStrikes = sum(batter_game.firstPitchStrike for batter_game in batter_games)
+    #         return firstPitchStrikes
+    #     return 0
+    firstPitchStrike = models.IntegerField(default=0)
+    
+    # @property
+    # def pickOff(self):
+    #     batter_games = self.games
+    #     if batter_games:
+    #         pickOffs = sum(batter_game.pickOff for batter_game in batter_games)
+    #         return pickOffs
+    #     return 0
+    pickOff = models.IntegerField(default=0)
     
     @property
     def atBat(self):
@@ -913,13 +948,6 @@ class PlayerGame(models.Model):
     def runnerAllowed(self):
         return self.oppHit + self.oppBaseOnBall + self.hitBatter
     
-    # @property
-    # def battingAvarageAgainst(self):
-    #     up = self.oppHit
-    #     down = self.totalBatterFaced - self.oppBaseOnBall - self.hitBatter - self.oppSacrificeFly - self.oppSacrificeBunt - self.catcherInterference
-    #     if down == 0:
-    #         return '-'
-    #     return "{:.3f}".format(up/down)
 
     @property
     def firstPitchStrikePercenttage(self):
@@ -936,6 +964,30 @@ class PlayerGame(models.Model):
     @property
     def pitchCount(self):
         return self.pitchStrike + self.pitchBall
+    
+    def save(self, *args, **kwargs):
+        # If this instance has already been saved, it has an id and we can get its old state.
+        if self.pk is not None:
+            old_self = PlayerGame.objects.get(pk=self.pk)
+            fields = ['plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
+                    'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
+                    'fielderChoice', 'sacrificeFly', 'sacrificeBunt', 'stolenBase', 
+                    'leftOnBase', 'doublePlay', 'triplePlay', 'onBaseByError', 'putOut', 
+                    'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
+                    'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
+                    'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
+                    'atBat', 'hit']
+            for field in fields:
+                diff = getattr(self, field) - getattr(old_self, field)
+                setattr(self.player, field, getattr(self.player, field) + diff)
+        else:
+            for field in fields:
+                setattr(self.player, field, getattr(self, field))
+
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+        # Save the Player model.
+        self.player.save()
    
 class Transaction(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, null=True,blank=True)
