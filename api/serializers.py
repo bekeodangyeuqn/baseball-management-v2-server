@@ -333,7 +333,7 @@ class PlayerListStatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Player
-        fields =  ['id', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
+        fields =  ['id', 'team_id', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
                   'onBasePlusSlugging', 'weightedOnBasePercentage', 'totalChance', 
                   'fieldingPercentage', 'earnedRunAverage', 'walkAndHitPerInning', 
                   'runnerAllowed', 'firstPitchStrikePercentage', 'fieldingIndependentPitching',
