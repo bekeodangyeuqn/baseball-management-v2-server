@@ -308,14 +308,15 @@ class LeagueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = League
-        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id', 'achieve')
+        fields = ('title', 'description', 'team_id', 'location', 'timeStart', 'timeEnd', 'id', 'achieve', 'status')
 
     def get_id(self, obj):
         return obj.id
     
     def create(self,validated_data):
         league = League.objects.create(title=validated_data['title'],description=validated_data['description'],team_id=validated_data['team_id'], 
-                                     location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], achieve=validated_data['achieve'])
+                                     location=validated_data['location'], timeStart=validated_data['timeStart'], timeEnd=validated_data['timeEnd'], achieve=validated_data['achieve'], 
+                                     status=validated_data['status'])
         league.save()
         return league
     
