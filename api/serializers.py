@@ -314,36 +314,21 @@ class PlayerListStatSerializer(serializers.ModelSerializer):
     balk = serializers.ReadOnlyField()
     wildPitch = serializers.ReadOnlyField()
     oppHomeRun = serializers.ReadOnlyField()
-    firstPitchStrike = serializers.ReadOnlyField()
     pickOff = serializers.ReadOnlyField()
     atBat = serializers.ReadOnlyField()
     hit = serializers.ReadOnlyField() 
-    battingAverage = serializers.ReadOnlyField() 
-    onBasePercentage = serializers.ReadOnlyField() 
-    sluggingPercentage = serializers.ReadOnlyField()
-    onBasePlusSlugging = serializers.ReadOnlyField() 
-    weightedOnBasePercentage = serializers.ReadOnlyField() 
-    totalChance = serializers.ReadOnlyField()
-    fieldingPercentage = serializers.ReadOnlyField() 
-    earnedRunAverage = serializers.ReadOnlyField() 
-    walkAndHitPerInning = serializers.ReadOnlyField() 
-    runnerAllowed = serializers.ReadOnlyField() 
-    firstPitchStrikePercentage = serializers.ReadOnlyField() 
-    fieldingIndependentPitching = serializers.ReadOnlyField()
+    earnedRun = serializers.ReadOnlyField() 
 
     class Meta:
         model = Player
-        fields =  ['id', 'team_id', 'onBasePercentage', 'sluggingPercentage', 'battingAverage',
-                  'onBasePlusSlugging', 'weightedOnBasePercentage', 'totalChance', 
-                  'fieldingPercentage', 'earnedRunAverage', 'walkAndHitPerInning', 
-                  'runnerAllowed', 'firstPitchStrikePercentage', 'fieldingIndependentPitching',
+        fields =  ['id', 'team_id', 
                   'plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
                   'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
                   'fielderChoice', 'sacrificeFly', 'sacrificeBunt', 'stolenBase', 
                   'leftOnBase', 'doublePlay', 'triplePlay', 'onBaseByError', 'putOut', 
                   'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
                   'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
-                  'balk', 'wildPitch', 'oppHomeRun', 'firstPitchStrike', 'pickOff', 
+                  'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
                   'atBat', 'hit']
 
     
