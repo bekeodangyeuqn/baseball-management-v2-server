@@ -538,15 +538,7 @@ class PlayerGameUpdate(generics.UpdateAPIView):
 
 @api_view(['POST'])
 def update_player(request):
-    try:
-        player_game = PlayerGame.objects.get(pk=5)
-    except PlayerGame.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        players = Player.objects.all()
-    except Player.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    players = Player.objects.all()
 
     fields = ['plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
               'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
@@ -556,10 +548,11 @@ def update_player(request):
               'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
               'balk', 'wildPitch', 'oppHomeRun', 'pickOff']
     for player in players:
-        for field in fields:
-            if (player_game):
+        try:
+            player_game = PlayerGame.objects.get(player=player, game_id=5)
+            for field in fields:
                 setattr(player, field, getattr(player_game, field))
-
-        player.save()
-
+            player.save()
+        except PlayerGame.DoesNotExist:
+            continue
     return Response(status=status.HTTP_200_OK)
