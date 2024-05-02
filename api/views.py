@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventPlayerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 from django.core.mail import send_mail
-from .models import AtBat, JoinRequest, League, PlayerGame, Transaction
+from .models import AtBat, JoinRequest, League, ManagerEvent, PlayerEvent, PlayerGame, Transaction
 from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
@@ -163,6 +163,98 @@ class JoinTeamRequest(APIView):
                 )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class EventPlayerRequest(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    # queryset = JoinRequest.objects.all()
+    # serializer_class = JoinRequestSerializer
+
+    def post(self, request, eventid, format='json'):
+        try:
+            event = Event.objects.get(pk=eventid)
+        except Event.DoesNotExist:
+            return Response({"error": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        managers = Manager.objects.filter(tam=event.team)
+        players = Player.objects.filter(team=event.team)
+
+        for manager in managers:
+            event_manager = ManagerEvent.objects.create(manager=manager, event=event)
+            event_manager.save()
+            uidb64 = base64.urlsafe_b64encode(force_bytes(event_manager.pk))
+            domain = get_current_site(self.request).domain
+            accept_link = reverse(
+                    "accept_event",
+                    kwargs={'pk': event_manager.pk},
+                )
+            activate_url = "http://" + domain + accept_link
+            deny_url = "http://" + domain + reverse("deny_event", kwargs={'pk': event_manager.pk})
+            email_subject = "Yêu cầu tham gia sự kiện"
+            email_message = "Đây là email từ Baseball management app"
+            email_template_path = os.path.join(os.path.dirname(__file__), 'emailEvent.html')
+            with open(email_template_path, 'r') as f:
+                email_template = f.read()
+                timeEnd = "Chưa rõ" if event.timeEnd is None else event.timeEnd
+                timeStart = "Chưa rõ" if event.timeStart is None else event.timeStart
+                location = "Chưa rõ" if event.location is None else event.location
+                email_body = email_template.format(
+                firstName=manager.firstName,
+                lastName=manager.lastName,
+                team=event.team.name,
+                title=event.title,
+                timeStart=timeStart,
+                timeEnd=timeEnd,
+                location=location,
+                activate_url=activate_url,
+                deny_url=deny_url
+            )
+            send_mail(
+                email_subject,
+                email_message,
+                "thaiduiqn@gmail.com",
+                [manager.email],
+                fail_silently=False,
+                html_message=email_body,
+            )
+        
+        for player in players:
+            event_player = PlayerEvent.objects.create(player=player, event=event)
+            event_player.save()
+            uidb64 = base64.urlsafe_b64encode(force_bytes(event_player.pk))
+            domain = get_current_site(self.request).domain
+            accept_link = reverse(
+                    "accept_event_player",
+                    kwargs={'pk': event_player.pk},
+                )
+            activate_url = "http://" + domain + accept_link
+            deny_url = "http://" + domain + reverse("deny_event_player", kwargs={'pk': event_player.pk})
+            email_subject = "Yêu cầu tham gia sự kiện"
+            email_message = "Đây là email từ Baseball management app"
+            email_template_path = os.path.join(os.path.dirname(__file__), 'emailEvent.html')
+            with open(email_template_path, 'r') as f:
+                email_template = f.read()
+                email_body = email_template.format(
+                firstName=player.firstName,
+                lastName=player.lastName,
+                team=event.team.name,
+                title=event.title,
+                timeStart=event.timeStart,
+                timeEnd=event.timeEnd,
+                location=event.location,
+                activate_url=activate_url,
+                deny_url=deny_url
+            )
+            send_mail(
+                email_subject,
+                email_message,
+                "thaiduiqn@gmail.com",
+                [player.email],
+                fail_silently=False,
+                html_message=email_body,
+            )
+        return Response({"message": "Emails sent successfully"}, status=status.HTTP_201_CREATED)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AcceptJoinRequestView(View):
     def get(self, request, *args, **kwargs):
@@ -179,10 +271,52 @@ class AcceptJoinRequestView(View):
 
         # Add the user to the team
 
-        return redirect('success_page')
+        return redirect('success_page') 
+
+class AcceptEventView(View):
+    def get(self, request, *args, **kwargs):
+        manager_event = ManagerEvent.objects.get(pk=kwargs['pk'])
+
+        # Accept the event
+        manager_event.status = 1
+        manager_event.save()
+        return redirect('success_event_page')
+    
+class AcceptEventPlayerView(View):
+    def get(self, request, *args, **kwargs):
+        player_event = PlayerEvent.objects.get(pk=kwargs['pk'])
+
+        # Accept the event
+        player_event.status = 1
+        player_event.save()
+        return redirect('success_event_page')
+
+class DenyEventView(View):
+    def get(self, request, *args, **kwargs):
+        manager_event = ManagerEvent.objects.get(pk=kwargs['pk'])
+
+        # Accept the event
+        manager_event.status = 0
+        manager_event.save()
+        return redirect('deny_event_page')
+    
+class DenyEventPlayerView(View):
+    def get(self, request, *args, **kwargs):
+        player_event = PlayerEvent.objects.get(pk=kwargs['pk'])
+
+        # Accept the event
+        player_event.status = 0
+        player_event.save()
+        return redirect('deny_event_page')
 
 class SuccessPageView(TemplateView):
     template_name = "success.html"
+
+class SuccessEventPageView(TemplateView):
+    template_name = "success_event.html"
+
+class DenyEventPageView(TemplateView):
+    template_name = "deny_event.html"
 
 class ErrorPageView(TemplateView):
     template_name = "error.html"

@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptJoinRequestView, AtBatCreate, AtBatList, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -12,9 +12,15 @@ urlpatterns = [
          name='token_create'),  # override sjwt stock token
      path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
      path("acceptjointeam/<pk>/",  AcceptJoinRequestView.as_view(), name="accept_jointeam"),
+     path("acceptevent/<pk>/",  AcceptEventView.as_view(), name="accept_event"),
+     path("denyevent/<pk>/",  DenyEventView.as_view(), name="deny_event"),
+     path("accepteventplayer/<pk>/",  AcceptEventPlayerView.as_view(), name="accept_event_player"),
+     path("denyeventplayer/<pk>/",  DenyEventPlayerView.as_view(), name="deny_event_player"),
      path("request_jointeam/",  JoinTeamRequest.as_view(), name="request_jointeam"),
      path('success/', SuccessPageView.as_view(), name='success_page'),
      path('error/', ErrorPageView.as_view(), name='error_page'),
+     path('successeventpage/', SuccessPageView.as_view(), name='success_event_page'),
+     path('denyeventpage/', ErrorPageView.as_view(), name='deny_event_page'),
      path('manager/profile/<int:pk>/',
          ManagerProfile.as_view(), name="manager_profile"),
      path('team/profile/<int:pk>/',

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import UserPushToken, AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
+from .models import PlayerEvent, UserPushToken, AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -94,7 +94,9 @@ class CreateManagerSerializer(serializers.ModelSerializer):
         # date_of_birth = datetime.strptime(
         #     validated_data['date_of_birth'], '%m/%d/%y')
         manager = Manager.objects.create(
-            firstName=validated_data['firstName'], lastName=validated_data['lastName'], date_of_birth=validated_data['date_of_birth'], avatar=avatar, user_id=validated_data['user_id'])
+            firstName=validated_data['firstName'], lastName=validated_data['lastName'], date_of_birth=validated_data['date_of_birth'], avatar=avatar, user_id=validated_data['user_id'],
+            homeTown=validated_data['homeTown'], jerseyNumber=validated_data['jerseyNumber'], phoneNumber=validated_data['phoneNumber'], email=validated_data['email']
+        )
         manager.save()
         return manager
 
@@ -158,6 +160,12 @@ class JoinRequestSerializer(serializers.ModelSerializer):
         join_request = JoinRequest.objects.create(manager_id=validated_data['manager_id'], team_id=validated_data['team_id'])
         join_request.save()
         return join_request
+    
+class EventRequestSerializer(serializers.ModelSerializer):
+    event_id = serializers.IntegerField()
+    class Meta:
+        model = Event
+        fields = ('event_id')
     
 class PlayerDetailSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
