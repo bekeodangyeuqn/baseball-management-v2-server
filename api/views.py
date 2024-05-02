@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventPlayerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventPlayerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UpdateManagerSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -364,8 +364,24 @@ class PlayerAvatarUpdate(generics.UpdateAPIView):
         if serializer.is_valid():
             player = Player.objects.get(pk=kwargs['playerid'])
             player.avatar_str = serializer.data.get('avatar_str')
-            player.avatar = base64_to_image(serializer.data.get('avatar_str'))
+            if (serializer.validated_data.get('avatar_str')):
+                player.avatar = base64_to_image(serializer.data.get('avatar_str'))
             player.save()
+            json = serializer.data
+            return Response(json, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ManagerUpdate(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        manager = Manager.objects.get(pk=kwargs['pk'])
+        serializer = UpdateManagerSerializer(manager, data=request.data, partial=True)
+        if serializer.is_valid():
+            if (serializer.validated_data.get('avatar_str')):
+                manager.avatar = base64_to_image(serializer.validated_data.get('avatar_str'))
+            manager.save()
+            serializer.save()
             json = serializer.data
             return Response(json, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -649,6 +665,10 @@ class GameUpdate(generics.UpdateAPIView):
 class PlayerUpdate(generics.UpdateAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerDetailSerializer
+
+class ManagerUpdate(generics.UpdateAPIView):
+    queryset = Manager.objects.all()
+    serializer_class = UpdateManagerSerializer
 
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()

@@ -99,6 +99,16 @@ class CreateManagerSerializer(serializers.ModelSerializer):
         )
         manager.save()
         return manager
+    
+class UpdateManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Manager
+        fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 
+                  'homeTown', 'jerseyNumber', 'phoneNumber', 'email'
+                  )
+        
+    def get_id(self, obj):
+            return obj.id
 
 class UserPushTokenSerializer(serializers.ModelSerializer):
     class Meta:
