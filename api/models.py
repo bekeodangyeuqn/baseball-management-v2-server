@@ -1000,7 +1000,7 @@ class Transaction(models.Model):
         default=1,
     )
     description = models.TextField(blank=True, null=True)
-    time = models.DateTimeField(default=datetime.datetime.now())
+    time = models.DateField(default=datetime.date.today)
     price = models.BigIntegerField()
 
 class Equipment(models.Model):
