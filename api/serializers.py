@@ -468,6 +468,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     id = serializers.SerializerMethodField(read_only=True)
     player_id = serializers.IntegerField()
+    description = serializers.CharField(allow_blank=True, allow_null=True)
 
     class Meta:
         model = Transaction
