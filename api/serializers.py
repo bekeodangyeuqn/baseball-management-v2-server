@@ -529,8 +529,8 @@ class PlayerGameCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PlayerGame
-        fields = [f.name for f in PlayerGame._meta.get_fields() if f.name not in ['game', 'player', 'runner_first', 'runner_second', 'runner_third', 'current_pitcher', 'pitch_first', 'pitch_second', 'pitch_third']]
-        fields += ['game_id', 'player_id', 'id']
+        fields = [f.name for f in PlayerGame._meta.get_fields() if f.name not in ['game', 'player', 'runner_first', 'runner_second', 'runner_third', 'current_pitcher', 'pitch_first', 'pitch_second', 'pitch_third' ]]
+        fields.extend(['game_id', 'player_id', 'id'])
         
 
     def get_id(self, obj):
@@ -594,9 +594,9 @@ class AtBatCreateSerializer(serializers.ModelSerializer):
         model = AtBat
         fields = [f.name for f in AtBat._meta.get_fields() if f.name not in ['game', 'isRunnerFirstOff', 'isRunnerSecondOff', 
                                                                              'isRunnerThirdOff', 'currentPitcher']]
-        fields += ['game_id', 'isRunnerFirstOff_id', 'isRunnerSecondOff_id',
-                    'isRunnerThirdOff_id', 'currentPitcher_id', 'id', 'pitcherResponseFirst_id',
-                    'pitcherResponseSecond_id', 'pitcherResponseThird_id']
+        fields.extend(['game_id', 'isRunnerFirstOff_id', 'isRunnerSecondOff_id',
+               'isRunnerThirdOff_id', 'currentPitcher_id', 'id', 'pitcherResponseFirst_id',
+               'pitcherResponseSecond_id', 'pitcherResponseThird_id'])
 
     def get_id(self, obj):
         return obj.id
