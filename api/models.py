@@ -982,6 +982,14 @@ class PlayerGame(models.Model):
                 diff = getattr(self, field) - getattr(old_self, field)
                 setattr(self.player, field, getattr(self.player, field) + diff)
         else:
+            fields = ['plateApperance', 'homeRun', 'runBattedIn', 'run', 'single', 'double', 
+                    'triple', 'baseOnBall', 'intentionalBB', 'hitByPitch', 'strikeOut', 
+                    'fielderChoice', 'sacrificeFly', 'sacrificeBunt', 'stolenBase', 
+                    'leftOnBase', 'doublePlay', 'triplePlay', 'onBaseByError', 'putOut', 
+                    'assist', 'error', 'totalBatterFaced', 'totalInGameOut', 'oppHit', 
+                    'oppRun', 'earnedRun', 'oppBaseOnBall', 'oppStrikeOut', 'hitBatter', 
+                    'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
+                ]   
             for field in fields:
                 setattr(self.player, field, getattr(self, field))
 
