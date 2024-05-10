@@ -758,7 +758,8 @@ class Game(models.Model):
     @property
     def team_inning_score(self):
         at_bats = list(AtBat.objects.filter(game=self))
-        max_inning = at_bats[-1].inning if at_bats else 0
+        largest_id_at_bat = max(at_bats, key=lambda at_bat: at_bat.id)
+        max_inning = largest_id_at_bat.inning if at_bats else 0
         arr = []
         if at_bats:
             for i in range(1, max_inning+1):
@@ -798,7 +799,8 @@ class Game(models.Model):
     @property
     def opp_inning_score(self):
         at_bats = list(AtBat.objects.filter(game=self))
-        max_inning = at_bats[-1].inning if at_bats else 0
+        largest_id_at_bat = max(at_bats, key=lambda at_bat: at_bat.id)
+        max_inning = largest_id_at_bat.inning if at_bats else 0
         arr = []
         if at_bats:
             for i in range(1, max_inning+1):
