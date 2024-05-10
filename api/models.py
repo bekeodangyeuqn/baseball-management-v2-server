@@ -767,7 +767,7 @@ class Game(models.Model):
                 inning_scores = [ab.teamScore for ab in inning_at_bats] if inning_at_bats else None
                 inning_score = max(inning_scores) if inning_scores else None
                 if (i > 1):
-                    arr.append(inning_score - arr[i - 1])
+                    arr.append(inning_score - arr[i - 2])
                 else: 
                     arr.append(inning_score)
         return arr
@@ -808,7 +808,7 @@ class Game(models.Model):
                 inning_scores = [ab.oppScore for ab in inning_at_bats] if inning_at_bats else None
                 inning_score = max(inning_scores) if inning_scores else None
                 if (i > 1):
-                    arr.append(inning_score - arr[i - 1])
+                    arr.append(inning_score - arr[i - 2])
                 else: 
                     arr.append(inning_score)
         return arr
