@@ -666,6 +666,10 @@ class PlayerUpdate(generics.UpdateAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerDetailSerializer
 
+class TeamUpdate(generics.UpdateAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+
 class ManagerUpdate(generics.UpdateAPIView):
     queryset = Manager.objects.all()
     serializer_class = UpdateManagerSerializer
