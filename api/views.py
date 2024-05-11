@@ -667,8 +667,19 @@ class PlayerUpdate(generics.UpdateAPIView):
     serializer_class = PlayerDetailSerializer
 
 class TeamUpdate(generics.UpdateAPIView):
-    queryset = Team.objects.all()
-    serializer_class = TeamSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        team = Team.objects.get(pk=kwargs['pk'])
+        serializer = TeamSerializer(team, data=request.data, partial=True)
+        if serializer.is_valid():
+            if (serializer.validated_data.get('logo_str')):
+                team.logo = base64_to_image(serializer.validated_data.get('logo_str'))
+            team.save()
+            serializer.save()
+            json = serializer.data
+            return Response(json, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ManagerUpdate(generics.UpdateAPIView):
     queryset = Manager.objects.all()
