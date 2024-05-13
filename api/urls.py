@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ManagerUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ManagerUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -79,5 +79,6 @@ urlpatterns = [
      path('userpushtokens/<int:team_id>/', PushTokenList.as_view(), name='push-token-list'),
      path('playerstats/team/<int:teamid>/', PlayerStatList.as_view(), name='player-stats'),
      path('seedstats/', update_player, name='seed_stats'),
+     path('teamstats/<int:team_id>/', TeamStatsView.as_view(), name='team_stats'),
     #  path('', include(router.urls)),
 ]

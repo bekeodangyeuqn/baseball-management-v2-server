@@ -725,3 +725,93 @@ def update_player(request):
         except PlayerGame.DoesNotExist:
             continue
     return Response(status=status.HTTP_200_OK)
+
+class TeamStatsView(APIView):
+    def get(self, request, team_id, format=None):
+        players = Player.objects.filter(team_id=team_id)
+        total_pa = sum(player.plateApperance for player in players)
+        total_single = sum(player.single for player in players)
+        total_double = sum(player.double for player in players)
+        total_triple = sum(player.triple for player in players)
+        total_hr = sum(player.homeRun for player in players)
+        total_rbi = sum(player.runBattedIn for player in players)
+        total_run = sum(player.run for player in players)
+        total_atBat = sum(player.atBat for player in players)
+        total_hit = sum(player.hit for player in players)
+        total_bb = sum(player.baseOnBall for player in players)
+        total_hbp = sum(player.hitByPitch for player in players)
+        total_stolenBase = sum(player.stolenBase for player in players)
+        total_strikeOut = sum(player.strikeOut for player in players)
+        total_onBaseErr = sum(player.onBaseByError for player in players)
+        if (total_atBat == 0): 
+            total_avg = '-'
+        else:
+            total_avg = "{:.3f}".format(total_hit / total_atBat)
+        if (total_pa == 0): 
+            total_obp = '-'
+        else:
+            total_obp = "{:.3f}".format((total_hit + total_bb + total_hbp + total_onBaseErr) / total_pa)
+
+        if (total_atBat == 0): 
+            total_slg = '-'
+        else:
+            total_slg = "{:.3f}".format((total_single + total_double*2 + total_triple*3 + total_hr*4) / total_atBat)
+
+        if total_obp == '-' and total_slg == '-':
+            total_ops =  '-'
+        elif total_obp == '-':
+            total_ops =  total_slg
+        elif total_slg == '-':
+            total_ops =  total_obp
+        else:
+            total_ops =  "{:.3f}".format(float(total_slg) + float(total_obp))
+
+        total_er = sum(player.earnedRun for player in players)
+        total_oppBB = sum(player.oppBaseOnBall for player in players)
+        total_oppSO = sum(player.oppStrikeOut for player in players)
+        total_oppHit = sum(player.oppHit for player in players)
+        total_outs = sum(player.totalInGameOut for player in players)
+
+        up = total_oppBB + total_oppHit
+        down = (total_outs // 3) + ((total_outs % 3) / 3)
+        if total_outs == 0:
+            if up != 0:
+                total_whip =  'INF'
+            else:
+                total_whip =  '-'
+        total_whip =  "{:.1f}".format(up/down)
+
+        up = sum(player.earnedRun*27 for player in players)
+        down = total_outs
+        if down == 0:
+            if total_er != 0:
+                total_era = 'INF'
+            else:
+                total_era = '-'
+        total_era = "{:.2f}".format(up/down)
+    
+        return Response({
+            'totalPA': total_pa,
+            'totalSingle': total_single,
+            'totalDouble': total_double,
+            'totalTriple': total_triple,
+            'totalHR': total_hr,
+            'totalRBI': total_rbi,
+            'totalRun': total_run,
+            'totalAtBat': total_atBat,
+            'totalHit': total_hit,
+            'totalBB': total_bb,
+            'totalHBP': total_hbp,
+            'totalStolenBase': total_stolenBase,
+            'totalStrikeOut': total_strikeOut,
+            'totalOBP': total_obp,
+            'totalSLG': total_slg,
+            'totalOPS': total_ops,
+            'totalAVG': total_avg,
+            'totalER': total_er,
+            'totalOppBB': total_oppBB,
+            'totalOppSO': total_oppSO,
+            'totalOppHit': total_oppHit,
+            'totalWHIP': total_whip,
+            'totalERA': total_era,
+        })

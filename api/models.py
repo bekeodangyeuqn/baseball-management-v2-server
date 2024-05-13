@@ -524,8 +524,8 @@ class Player(models.Model):
     
     @property
     def onBasePercentage(self):
-        up = self.hit + self.baseOnBall + self.hitByPitch
-        down = self.atBat + self.baseOnBall + self.hitByPitch + self.sacrificeFly
+        up = self.hit + self.baseOnBall + self.hitByPitch + self.onBaseByError
+        down = self.plateApperance
         if down == 0:
             return "-"
         return "{:.3f}".format(up/down)
@@ -573,7 +573,7 @@ class Player(models.Model):
     def earnedRunAverage(self):
         batter_games = self.games
         if (batter_games):
-            up = sum(batter_game.earnedRun*batter_game.game.inningERA*3 for batter_game in batter_games)
+            up = sum(batter_game.earnedRun*27 for batter_game in batter_games)
             down = self.totalInGameOut
             if down == 0:
                 if self.earnedRun != 0:
