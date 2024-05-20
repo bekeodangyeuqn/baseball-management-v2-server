@@ -631,5 +631,14 @@ class AtBatSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return obj.id
+    
+class NotificationSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField(read_only=True)
+    team_id = serializers.IntegerField()
+    class Meta:
+        model = AtBat
+        fields = '__all__'
 
+    def get_id(self, obj):
+        return obj.id
 

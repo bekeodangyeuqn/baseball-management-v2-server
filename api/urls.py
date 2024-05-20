@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ManagerUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -63,6 +63,7 @@ urlpatterns = [
      path('games/team/<int:teamid>/', GameList.as_view(), name='game-list'),
      path('transactions/team/<int:teamid>/', TransactionList.as_view(), name='transaction-list'),
      path('equipments/team/<int:teamid>/', EquipmentList.as_view(), name='equipment-list'),
+     path('notifications/team/<int:teamid>/', NotificationList.as_view(), name='notification-list'),
      path('playergames/game/<int:gameid>/', PlayerGameList.as_view(), name='playergame-list'),
      path('atbats/game/<int:gameid>/', AtBatList.as_view(), name='atbat-list'),
      path('game/updates/<int:pk>/', GameUpdate.as_view(), name='game-update'),

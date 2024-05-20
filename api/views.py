@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UpdateManagerSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, NotificationSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UpdateManagerSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -691,6 +691,13 @@ class EquipmentList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Equipment.objects.filter(team=team)
+    
+class NotificationList(generics.ListCreateAPIView):
+    serializer_class = NotificationSerializer
+    
+    def get_queryset(self):
+        team = Team.objects.get(id=self.kwargs['teamid'])
+        return Notification.objects.filter(team=team)
     
 class AtBatList(generics.ListCreateAPIView):
     serializer_class = AtBatSerializer
