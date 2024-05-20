@@ -15,7 +15,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 from django.core.mail import send_mail
-from .models import AtBat, JoinRequest, League, ManagerEvent, PlayerEvent, PlayerGame, Transaction
+from .models import AtBat, JoinRequest, League, ManagerEvent, Notification, PlayerEvent, PlayerGame, Transaction
 from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
 from django.contrib.sites.shortcuts import get_current_site
@@ -349,9 +349,17 @@ class PlayerCreate(APIView):
     def post(self, request, format='json'):
         serializer = PlayerDetailSerializer(data=request.data)
         if serializer.is_valid():
-            player = serializer.save()
+            player : Player = serializer.save()
             if player:
                 json = serializer.data
+                Notification.objects.create(
+                    team = player.team, 
+                    title = "Thêm cầu thủ", 
+                    content=f"Cầu thủ #{player.jerseyNumber}.{player.firstName} {player.lastName} vừa được thêm.",
+                    time = datetime.datetime.now(),
+                    screen = "PlayerProfile",
+                    item_id = player.pk
+                )
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -443,6 +451,14 @@ class ImportPlayerAPIView(APIView):
                 )
                 players.append(player)
             Player.objects.bulk_create(players)
+            Notification.objects.create(
+                team = player.team, 
+                title = "Thêm một số cầu thủ", 
+                content=f"Một số cầu thủ vừa được thêm qua file Excel.",
+                time = datetime.datetime.now(),
+                screen = "PlayerList",
+                item_id = None
+            )
             return Response({
                 'status': True,
                 'message': "Players created successfully"
@@ -455,9 +471,17 @@ class EventCreate(APIView):
     def post(self, request, format='json'):
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
-            event = serializer.save()
+            event : Event = serializer.save()
             if event:
                 json = serializer.data
+                Notification.objects.create(
+                    team = event.team, 
+                    title = "Thêm sự kiện", 
+                    content=f"Sự kiện {event.title} bắt đầu lúc {event.timeStart} vừa được thêm.",
+                    time = datetime.datetime.now(),
+                    screen = "EventDetail",
+                    item_id = event.pk
+                )
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -467,9 +491,17 @@ class LeagueCreate(APIView):
     def post(self, request, format='json'):
         serializer = LeagueSerializer(data=request.data)
         if serializer.is_valid():
-            league = serializer.save()
+            league : League = serializer.save()
             if league:
                 json = serializer.data
+                Notification.objects.create(
+                    team = league.team, 
+                    title = "Thêm giải đấu", 
+                    content=f"Giải đấu {league.title} vừa được thêm.",
+                    time = datetime.datetime.now(),
+                    screen = "LeagueDetail",
+                    item_id = league.pk
+                )
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -479,9 +511,17 @@ class GameCreate(APIView):
     def post(self, request, format='json'):
         serializer = GameCreateSerializer(data=request.data)
         if serializer.is_valid():
-            game = serializer.save()
+            game : Game = serializer.save()
             if game:
                 json = serializer.data
+                Notification.objects.create(
+                    team = game.team, 
+                    title = "Cập nhật trận đấu", 
+                    content=f"Trận đấu với {game.oppTeam} bắt đầu lúc {game.timeStart} vừa được thêm.",
+                    time = datetime.datetime.now(),
+                    screen = "GameDetail",
+                    item_id = game.pk
+                )
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -503,9 +543,17 @@ class EquipmentCreate(APIView):
     def post(self, request, format='json'):
         serializer = EquipmentSerializer(data=request.data)
         if serializer.is_valid():
-            equipment = serializer.save()
+            equipment : Equipment = serializer.save()
             if equipment:
                 json = serializer.data
+                Notification.objects.create(
+                    team = equipment.team, 
+                    title = "Thêm dụng cụ", 
+                    content=f"Dụng cụ {equipment.name} vừa được thêm.",
+                    time = datetime.datetime.now(),
+                    screen = "EquipmentDetail",
+                    item_id = equipment.pk
+                )
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -662,9 +710,35 @@ class GameUpdate(generics.UpdateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameCreateSerializer
 
+    def perform_update(self, serializer):
+        game : Game = self.get_object()
+        serializer.save()
+        # Create a notification after the game is updated
+        Notification.objects.create(
+            team = game.team, 
+            title = "Cập nhật trận đấu", 
+            content=f"Thông tin trận đấu với {game.oppTeam} bắt đầu lúc {game.timeStart} vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "GameDetail",
+            item_id = game.pk
+        )
+
 class PlayerUpdate(generics.UpdateAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerDetailSerializer
+
+    def perform_update(self, serializer):
+        player : Player = self.get_object()
+        serializer.save()
+        # Create a notification after the game is updated
+        Notification.objects.create(
+            team = player.team, 
+            title = "Cập nhật cầu thủ", 
+            content=f"Thông tin cầu thủ #{player.jerseyNumber}.{player.firstName} {player.lastName} vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "PlayerProfile",
+            item_id = player.pk
+        )
 
 class TeamUpdate(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -678,6 +752,14 @@ class TeamUpdate(generics.UpdateAPIView):
             team.save()
             serializer.save()
             json = serializer.data
+            Notification.objects.create(
+            team = team, 
+            title = "Cập nhật thông tin đội", 
+            content=f"Thông tin của đội bóng vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "TeamProfile",
+            item_id = team.pk
+        )
             return Response(json, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -689,9 +771,35 @@ class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+    def perform_update(self, serializer):
+        event : Event = self.get_object()
+        serializer.save()
+        # Create a notification after the game is updated
+        Notification.objects.create(
+            team = event.team, 
+            title = "Cập nhật sự kiện", 
+            content=f"Thông tin sự kiện {event.title} bắt đầu lúc {event.timeStart} vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "EventDetail",
+            item_id = event.pk
+        )
+
 class LeagueUpdate(generics.UpdateAPIView):
     queryset = League.objects.all()
     serializer_class = LeagueSerializer
+
+    def perform_update(self, serializer):
+        league : League = self.get_object()
+        serializer.save()
+        # Create a notification after the game is updated
+        Notification.objects.create(
+            team = league.team, 
+            title = "Cập nhật giải đấu", 
+            content=f"Thông tin giải đấu {league.title} vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "LeagueDetail",
+            item_id = league.pk
+        )
 
 class TransactionUpdate(generics.UpdateAPIView):
     queryset = Transaction.objects.all()
@@ -700,6 +808,19 @@ class TransactionUpdate(generics.UpdateAPIView):
 class EquipmentUpdate(generics.UpdateAPIView):
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer
+
+    def perform_update(self, serializer):
+        equipment : Equipment = self.get_object()
+        serializer.save()
+        # Create a notification after the game is updated
+        Notification.objects.create(
+            team = equipment.team, 
+            title = "Cập nhật dụng cụ", 
+            content=f"Thông tin dụng cụ {equipment.name} vừa được cập nhật.",
+            time = datetime.datetime.now(),
+            screen = "EquipmentDetail",
+            item_id = equipment.pk
+        )
 
 class PlayerGameUpdate(generics.UpdateAPIView):
     queryset = PlayerGame.objects.all()
