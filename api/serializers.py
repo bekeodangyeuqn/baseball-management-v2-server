@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .models import PlayerEvent, UserPushToken, AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
+from .models import Notification, PlayerEvent, UserPushToken, AtBat, Event, Game, JoinRequest, League, Manager, Player, Team, Transaction, Equipment, PlayerGame
 import base64
 from django.core.files.base import ContentFile
 import string
@@ -636,7 +636,7 @@ class NotificationSerializer(serializers.Serializer):
     id = serializers.SerializerMethodField(read_only=True)
     team_id = serializers.IntegerField()
     class Meta:
-        model = AtBat
+        model = Notification
         fields = '__all__'
 
     def get_id(self, obj):
