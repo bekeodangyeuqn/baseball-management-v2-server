@@ -632,7 +632,7 @@ class AtBatSerializer(serializers.ModelSerializer):
     def get_id(self, obj):
         return obj.id
     
-class NotificationSerializer(serializers.Serializer):
+class NotificationSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
     team_id = serializers.IntegerField()
     class Meta:
