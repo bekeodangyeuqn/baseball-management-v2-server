@@ -637,7 +637,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     class Meta:
         model = Notification
-        fields = ('id', 'team_id', 'title', 'content', 'date', 'isRead', 'screen','item_id')
+        fields = ('id', 'team_id', 'title', 'content', 'time', 'isRead', 'screen','item_id')
 
     def get_id(self, obj):
         return obj.id
