@@ -634,10 +634,10 @@ class AtBatSerializer(serializers.ModelSerializer):
     
 class NotificationSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField(read_only=True)
-    team_id = serializers.IntegerField()
+    manager_id = serializers.IntegerField()
     class Meta:
         model = Notification
-        fields = ('id', 'team_id', 'title', 'content', 'time', 'isRead', 'screen','item_id')
+        fields = ('id', 'manager_id', 'title', 'content', 'time', 'isRead', 'screen','item_id')
 
     def get_id(self, obj):
         return obj.id

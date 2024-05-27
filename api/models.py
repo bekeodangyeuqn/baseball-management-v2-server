@@ -1067,7 +1067,7 @@ class AtBat(models.Model):
     pitcherResponseThird = models.ForeignKey(PlayerGame, on_delete=models.CASCADE, related_name='pitch_third', null=True, blank=True)
     
 class Notification(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     title = models.TextField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
     time = models.DateTimeField(default=datetime.datetime.now())
