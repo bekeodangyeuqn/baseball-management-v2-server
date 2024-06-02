@@ -695,6 +695,18 @@ class PlayerStatList(generics.ListCreateAPIView):
     def get_queryset(self):
         team = Team.objects.get(id=self.kwargs['teamid'])
         return Player.objects.filter(team=team)
+
+class PlayerEventList(generics.ListCreateAPIView):
+    serializer_class = PlayerEvent
+    def get_queryset(self):
+        event = Event.objects.get(id=self.kwargs['eventid'])
+        return PlayerEvent.objects.filter(event=event)
+
+class ManagerEventList(generics.ListCreateAPIView):
+    serializer_class = ManagerEvent
+    def get_queryset(self):
+        event = Event.objects.get(id=self.kwargs['eventid'])
+        return ManagerEvent.objects.filter(event=event)
     
 class TransactionList(generics.ListCreateAPIView):
     serializer_class = TransactionSerializer
