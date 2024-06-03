@@ -83,7 +83,7 @@ urlpatterns = [
      path('playerstats/team/<int:teamid>/', PlayerStatList.as_view(), name='player-stats'),
      path('seedstats/', update_player, name='seed_stats'),
      path('teamstats/<int:team_id>/', TeamStatsView.as_view(), name='team_stats'),
-     path('event/players/<int:eventid>', PlayerEventList.as_view(), name='event_players'),
-     path('event/managers/<int:eventid>', ManagerEventList.as_view(), name='event_managers'),
+     path('event/players/<int:eventid>/', PlayerEventList.as_view(), name='event_players'),
+     path('event/managers/<int:eventid>/', ManagerEventList.as_view(), name='event_managers'),
     #  path('', include(router.urls)),
 ]
