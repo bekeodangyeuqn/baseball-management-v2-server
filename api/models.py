@@ -625,6 +625,8 @@ class Event(models.Model):
         blank=True,
         default=-1
     )
+    # players = models.ManyToManyField(Player, through='PlayerEvent')
+    # managers = models.ManyToManyField(Manager, through='ManagerEvent')
 
 class Practice(models.Model):
     title = models.CharField(max_length=200)

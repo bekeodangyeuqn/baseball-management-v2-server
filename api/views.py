@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status, generics
 from rest_framework.response import Response
 from django.contrib.auth.models import User
-from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerListSerializer, NotificationSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UpdateManagerSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
+from .serializers import AtBatCreateSerializer, AtBatSerializer, CreateManagerSerializer, EventRequestSerializer, EventSerializer, GameCreateSerializer, GameSerializer, ImporterSerializer, LeagueSerializer, ManagerDetailSerializer, ManagerEventSerializer, ManagerListSerializer, NotificationSerializer, PlayerAvatarSerializer, PlayerDetailSerializer, PlayerEventSerializer, PlayerGameCreateSerializer, PlayerGameSerializer, PlayerListSerializer, PlayerListStatSerializer, TeamCreateSerializer, TeamSerializer, TransactionSerializer, UpdateManagerSerializer, UserPushTokenSerializer, UserSerializer, EquipmentSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -697,13 +697,13 @@ class PlayerStatList(generics.ListCreateAPIView):
         return Player.objects.filter(team=team)
 
 class PlayerEventList(generics.ListCreateAPIView):
-    serializer_class = PlayerEvent
+    serializer_class = PlayerEventSerializer
     def get_queryset(self):
         event = Event.objects.get(id=self.kwargs['eventid'])
         return PlayerEvent.objects.filter(event=event)
 
 class ManagerEventList(generics.ListCreateAPIView):
-    serializer_class = ManagerEvent
+    serializer_class = ManagerEventSerializer
     def get_queryset(self):
         event = Event.objects.get(id=self.kwargs['eventid'])
         return ManagerEvent.objects.filter(event=event)
