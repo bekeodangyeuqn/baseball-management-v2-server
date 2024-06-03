@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPageView, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessEventPageView, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -20,8 +20,8 @@ urlpatterns = [
      path("request_joinevent/<int:eventid>",  EventPlayerRequest.as_view(), name="request_joinevent"),
      path('success/', SuccessPageView.as_view(), name='success_page'),
      path('error/', ErrorPageView.as_view(), name='error_page'),
-     path('successeventpage/', SuccessPageView.as_view(), name='success_event_page'),
-     path('denyeventpage/', ErrorPageView.as_view(), name='deny_event_page'),
+     path('successeventpage/', SuccessEventPageView.as_view(), name='success_event_page'),
+     path('denyeventpage/', DenyEventPageView.as_view(), name='deny_event_page'),
      path('manager/profile/<int:pk>/',
          ManagerProfile.as_view(), name="manager_profile"),
      path('team/profile/<int:pk>/',
