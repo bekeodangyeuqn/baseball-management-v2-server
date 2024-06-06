@@ -9,12 +9,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.decorators import api_view
-from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import authenticate, login
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 from django.core.mail import send_mail
+from rest_framework.permissions import IsAuthenticated
 from .models import AtBat, JoinRequest, League, ManagerEvent, Notification, PlayerEvent, PlayerGame, Transaction
 from .serializers import JoinRequestSerializer
 from .serializers import MyTokenObtainPairSerializer
@@ -32,6 +32,10 @@ from .utils import token_generator
 from django.views import View
 from django.views.generic import TemplateView
 from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth import update_session_auth_hash
+from .serializers import ChangePasswordSerializer
+
+
 import os
 import string
 # initializing size of string
@@ -103,6 +107,21 @@ class ObtainTokenPairWithView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    if request.method == 'POST':
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if user.check_password(serializer.data.get('old_password')):
+                user.set_password(serializer.data.get('new_password'))
+                user.save()
+                update_session_auth_hash(request, user)  # To update session after password change
+                return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Incorrect old password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ManagerCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -131,6 +150,9 @@ class JoinTeamRequest(APIView):
         serializer = JoinRequestSerializer(data=request.data)
         if serializer.is_valid():
             join_request = serializer.save()
+            pending_request = JoinRequest.objects.filter(manager=join_request.manager, status=0, team=join_request.team)
+            if pending_request.exists():
+                return Response({"message": "You have already sent a pending join request to this team."}, status=400)
             join_request.created_at = datetime.datetime.now()
             join_request.save()
             managers = Manager.objects.filter(team=join_request.team)

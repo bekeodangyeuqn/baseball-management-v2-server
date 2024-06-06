@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPageView, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessEventPageView, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPageView, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessEventPageView, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, change_password, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -8,6 +8,8 @@ from rest_framework.routers import DefaultRouter
 urlpatterns = [
      path('register/', UserCreate.as_view(), name='register-user'),
      path('login/', UserLogin.as_view(), name='user-login'),
+     path('change_password/', change_password, name='change_password'),
+     path('password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
      path('token/obtain/', ObtainTokenPairWithView.as_view(),
          name='token_create'),  # override sjwt stock token
      path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
