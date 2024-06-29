@@ -134,7 +134,7 @@ class TeamCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ('name', 'shortName', 'city', 'country',
-                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id', 'id', 'teamFund')
+                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'managers', 'user_id', 'id')
 
     def get_managers(self, obj):
         query_set = Manager.objects.filter(team=obj)
@@ -161,7 +161,7 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ('name', 'shortName', 'city', 'country',
-                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'id', 'teamFund')
+                  'homeStadium', 'foundedDate', 'logo_str', 'logo', 'id')
     def get_id(self, obj):
         return obj.id
 
