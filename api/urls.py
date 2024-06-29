@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPageView, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessEventPageView, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, change_password, update_player
+from .views import AcceptEventPlayerView, AcceptEventView, AcceptJoinRequestView, AtBatCreate, AtBatList, DenyEventPageView, DenyEventPlayerView, DenyEventView, EquipmentUpdate, ErrorPageView, EventCreate, EventList, EventPlayerRequest, EventProfile, EventDelete, EventUpdate, GameCreate, GameList, GameProfile, GameUpdate, ImportPlayerAPIView, JoinRequestList, JoinTeamRequest, LeagueCreate, LeagueDelete, LeagueList, LeagueProfile, LeagueUpdate, LeaveTeamView, ManagerCreate, ManagerEventList, ManagerList, ManagerProfile, ManagerUpdate, NotificationList, NotificationUpdate, ObtainTokenPairWithView, PlayerAvatarUpdate, PlayerCreate, PlayerEventList, PlayerGameCreate, PlayerGameList, PlayerGameUpdate, PlayerList, PlayerProfile, PlayerStatList, PlayerUpdate, PushTokenList, SeedPushToken, SuccessEventPageView, SuccessPageView, TeamCreate, TeamListView, TeamProfile, TeamStatsView, TeamUpdate, TransactionCreate, TransactionList, TransactionProfile, TransactionUpdate, UpdatePushToken, UserCreate, UserLogin, TransactionDelete, EquipmentList, EquipmentCreate, EquipmentDelete, change_password, update_player
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.routers import DefaultRouter
 
@@ -87,5 +87,7 @@ urlpatterns = [
      path('teamstats/<int:team_id>/', TeamStatsView.as_view(), name='team_stats'),
      path('event/players/<int:eventid>/', PlayerEventList.as_view(), name='event_players'),
      path('event/managers/<int:eventid>/', ManagerEventList.as_view(), name='event_managers'),
+     path('request_jointeam/<int:managerid>', JoinRequestList.as_view(), name='request_team_list'),
+     path('managers/<int:manager_id>/leave_team/', LeaveTeamView.as_view(), name='leave-team'),
     #  path('', include(router.urls)),
 ]

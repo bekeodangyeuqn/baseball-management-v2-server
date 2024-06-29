@@ -109,7 +109,7 @@ class Team(models.Model):
     logo = models.ImageField(
         upload_to="logos/", default="logos/logo.png", null=True, blank=True)
     logo_str = models.TextField(blank=True, null=True)
-    teamFund = models.BigIntegerField(default=0, blank=True)
+    # teamFund = models.BigIntegerField(default=0, blank=True)
 
 
 class Manager(models.Model):
@@ -349,19 +349,19 @@ class Event(models.Model):
     # players = models.ManyToManyField(Player, through='PlayerEvent')
     # managers = models.ManyToManyField(Manager, through='ManagerEvent')
 
-class Practice(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
-    team = models.ForeignKey(
-        Team, on_delete=models.CASCADE, blank=True, null=True)
-    location = models.TextField(max_length=500, blank=True, null=True)
-    timeStart = models.DateTimeField(default=datetime.datetime.now())
-    timeEnd = models.DateTimeField(blank=True, null=True)
-    status = models.IntegerField(
-        choices= STATUS,
-        blank=True,
-        default=-1
-    )
+# class Practice(models.Model):
+#     title = models.CharField(max_length=200)
+#     description = models.TextField(blank=True, null=True)
+#     team = models.ForeignKey(
+#         Team, on_delete=models.CASCADE, blank=True, null=True)
+#     location = models.TextField(max_length=500, blank=True, null=True)
+#     timeStart = models.DateTimeField(default=datetime.datetime.now())
+#     timeEnd = models.DateTimeField(blank=True, null=True)
+#     status = models.IntegerField(
+#         choices= STATUS,
+#         blank=True,
+#         default=-1
+#     )
 
 
 class PlayerEvent(models.Model):
@@ -392,19 +392,19 @@ class ManagerEvent(models.Model):
         default=2,
     )
 
-class PlayerPractice(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
-    ATTEND_STATUS = (
-        (1, "Attend"),
-        (0, "Not attend"),
-        (2, "Pending")
-    )
-    status = models.IntegerField(
-        choices=ATTEND_STATUS,
-        blank=True,
-        default=2,
-    )
+# class PlayerPractice(models.Model):
+#     player = models.ForeignKey(Player, on_delete=models.CASCADE)
+#     practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
+#     ATTEND_STATUS = (
+#         (1, "Attend"),
+#         (0, "Not attend"),
+#         (2, "Pending")
+#     )
+#     status = models.IntegerField(
+#         choices=ATTEND_STATUS,
+#         blank=True,
+#         default=2,
+#     )
 
 class League(models.Model):
     title = models.CharField(max_length=200)

@@ -765,6 +765,13 @@ class PlayerGameList(generics.ListCreateAPIView):
         game = Game.objects.get(id=self.kwargs['gameid'])
         return PlayerGame.objects.filter(game=game)
     
+class JoinRequestList(generics.ListCreateAPIView):
+    serializer_class = JoinRequestSerializer
+    
+    def get_queryset(self):
+        manager = Manager.objects.get(id=self.kwargs['managerid'])
+        return JoinRequest.objects.filter(manager=manager)
+    
 class GameUpdate(generics.UpdateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameCreateSerializer
@@ -1012,3 +1019,19 @@ class TeamStatsView(APIView):
             'totalWHIP': total_whip,
             'totalERA': total_era,
         })
+
+class LeaveTeamView(APIView):
+    def post(self, request, manager_id):
+        manager = get_object_or_404(Manager, id=manager_id)
+        join_team = get_object_or_404(JoinRequest, manager=manager, team = manager.team)
+        # if manager.user != request.user:
+        #     return Response({"error": "You can only leave a team for yourself."}, status=status.HTTP_403_FORBIDDEN)
+        
+        manager.team = None
+        manager.save()
+        try:
+            join_team.delete()
+        except JoinRequest.DoesNotExist:
+            pass 
+        serializer = ManagerDetailSerializer(manager)
+        return Response(serializer.data, status=status.HTTP_200_OK)
