@@ -153,7 +153,7 @@ class JoinTeamRequest(APIView):
         if serializer.is_valid():
             join_request = serializer.save()
             most_recent_request = JoinRequest.objects.filter(manager=join_request.manager).order_by('-created_at').first()
-            if most_recent_request is not None:
+            if most_recent_request is not None and most_recent_request.created_at is not None:
                 time_difference = datetime.datetime.now() - most_recent_request.created_at
                 if time_difference <= timedelta(minutes=10):
                     return Response({"message": "Please wait at least 10 minutes before making a new join request."}, status=403)
