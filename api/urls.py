@@ -88,6 +88,6 @@ urlpatterns = [
      path('event/players/<int:eventid>/', PlayerEventList.as_view(), name='event_players'),
      path('event/managers/<int:eventid>/', ManagerEventList.as_view(), name='event_managers'),
      path('request_jointeam/<int:managerid>', JoinRequestList.as_view(), name='request_team_list'),
-     path('managers/<int:manager_id>/leave_team/', LeaveTeamView.as_view(), name='leave-team'),
+     path('manager/leave_team/<int:manager_id>/', LeaveTeamView.as_view(), name='leave-team'),
     #  path('', include(router.urls)),
 ]
