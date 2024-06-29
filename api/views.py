@@ -1,4 +1,6 @@
+from datetime import timedelta
 import datetime
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from rest_framework import status, generics
@@ -152,8 +154,8 @@ class JoinTeamRequest(APIView):
             join_request = serializer.save()
             most_recent_request = JoinRequest.objects.filter(manager=join_request.manager).order_by('-created_at').first()
             if most_recent_request is not None:
-                time_difference = datetime.timezone.now() - most_recent_request.created_at
-                if time_difference <= datetime.timedelta(minutes=10):
+                time_difference = datetime.datetime.now() - most_recent_request.created_at
+                if time_difference <= timedelta(minutes=10):
                     return Response({"message": "Please wait at least 10 minutes before making a new join request."}, status=403)
             pending_request = JoinRequest.objects.filter(manager=join_request.manager, status=0, team=join_request.team)
             if pending_request.exists():
