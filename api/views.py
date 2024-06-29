@@ -157,7 +157,7 @@ class JoinTeamRequest(APIView):
                 time_difference = datetime.datetime.now() - most_recent_request.created_at
                 if time_difference <= timedelta(minutes=10):
                     return Response({"message": "Please wait at least 10 minutes before making a new join request."}, status=403)
-            pending_request = JoinRequest.objects.filter(manager=join_request.manager, status=0, team=join_request.team)
+            pending_request = JoinRequest.objects.filter(manager=join_request.manager, accepted=0, team=join_request.team)
             if pending_request.exists():
                 return Response({"message": "You have already sent a pending join request to this team."}, status=403)
             join_request.created_at = datetime.datetime.now()
