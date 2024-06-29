@@ -1,5 +1,6 @@
 from datetime import timedelta
 import datetime
+import logging
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -143,6 +144,9 @@ class ManagerCreate(APIView):
         # Automatically set the user of the profile to the currently authenticated user
         serializer.save(user=self.request.user)
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 class JoinTeamRequest(APIView):
     permission_classes = [permissions.IsAuthenticated]
     # queryset = JoinRequest.objects.all()
@@ -154,13 +158,14 @@ class JoinTeamRequest(APIView):
             join_request = serializer.save()
             most_recent_request = JoinRequest.objects.filter(manager=join_request.manager).order_by('-created_at').first()
             if most_recent_request is not None and most_recent_request.created_at is not None:
-                time_difference = datetime.datetime.now() - most_recent_request.created_at
+                time_difference = timezone.now() - most_recent_request.created_at
+                logger.info("Time difference: %s", time_difference)  # Use logger instead of print
                 if time_difference <= timedelta(minutes=10):
                     return Response({"message": "Please wait at least 10 minutes before making a new join request."}, status=403)
             pending_request = JoinRequest.objects.filter(manager=join_request.manager, accepted=0, team=join_request.team)
             if pending_request.exists():
                 return Response({"message": "You have already sent a pending join request to this team."}, status=403)
-            join_request.created_at = datetime.datetime.now()
+            join_request.created_at = timezone.now()
             join_request.save()
             managers = Manager.objects.filter(team=join_request.team)
             uidb64 = base64.urlsafe_b64encode(force_bytes(join_request.pk))
