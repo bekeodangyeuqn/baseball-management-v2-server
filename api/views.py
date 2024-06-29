@@ -150,9 +150,14 @@ class JoinTeamRequest(APIView):
         serializer = JoinRequestSerializer(data=request.data)
         if serializer.is_valid():
             join_request = serializer.save()
+            most_recent_request = JoinRequest.objects.filter(manager=join_request.manager).order_by('-created_at').first()
+            if most_recent_request is not None:
+                time_difference = datetime.timezone.now() - most_recent_request.created_at
+                if time_difference <= datetime.timedelta(minutes=10):
+                    return Response({"message": "Please wait at least 10 minutes before making a new join request."}, status=403)
             pending_request = JoinRequest.objects.filter(manager=join_request.manager, status=0, team=join_request.team)
             if pending_request.exists():
-                return Response({"message": "You have already sent a pending join request to this team."}, status=400)
+                return Response({"message": "You have already sent a pending join request to this team."}, status=403)
             join_request.created_at = datetime.datetime.now()
             join_request.save()
             managers = Manager.objects.filter(team=join_request.team)
