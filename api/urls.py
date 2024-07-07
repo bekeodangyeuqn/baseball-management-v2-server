@@ -43,7 +43,7 @@ urlpatterns = [
          GameProfile.as_view(), name="game_profile"),
      path('transaction/delete/<int:pk>/',
          TransactionDelete.as_view(), name="transaction_delete"),
-     path('transaction/delete/<int:pk>/',
+     path('equipment/delete/<int:pk>/',
          EquipmentDelete.as_view(), name="equipment_delete"),
      path('player/profile/<int:pk>/',
          PlayerProfile.as_view(), name="player_profile"),
