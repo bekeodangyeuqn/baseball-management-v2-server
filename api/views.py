@@ -302,6 +302,14 @@ class AcceptJoinRequestView(View):
         manager.team = join_request.team
         manager.save()
         join_request.save()
+        Notification.objects.create(
+            manager = manager, 
+            title = "Gia nhập đội thành công", 
+            content=f"Yêu cầu gia nhập đội {join_request.team.name} của bạn đã được chấp nhận.",
+            time = datetime.datetime.now(),
+            screen = "",
+            item_id = None
+        )
 
         # Add the user to the team
 
