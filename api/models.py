@@ -135,7 +135,7 @@ class JoinRequest(models.Model):
         choices=EMAIL_SEND,
         max_length=1,
         blank=True,
-        default=-1
+        default=0
     )
     created_at = models.DateTimeField(blank=True, null=True)
 

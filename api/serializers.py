@@ -171,7 +171,7 @@ class JoinRequestSerializer(serializers.ModelSerializer):
     team_id = serializers.IntegerField()
     class Meta:
         model = JoinRequest
-        fields = ('manager_id', 'team_id')
+        fields = ('manager_id', 'team_id', 'accepted')
 
     def create(self, validated_data):
         join_request = JoinRequest.objects.create(manager_id=validated_data['manager_id'], team_id=validated_data['team_id'])
