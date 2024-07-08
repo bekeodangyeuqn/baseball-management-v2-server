@@ -509,6 +509,13 @@ class EquipmentSerializer(serializers.ModelSerializer):
                                      category=validated_data['category'], brand=validated_data['brand'], description=validated_data['description'], avatar=avatar)
         equipment.save()
         return equipment
+
+    # def update(self, instance, validated_data):
+    #     avatar = base64_to_image(validated_data['avatar_str'])
+    #     equipment = instance.update(player_id=validated_data['player_id'],team_id=validated_data['team_id'], name=validated_data["name"],
+    #                                  category=validated_data['category'], brand=validated_data['brand'], description=validated_data['description'], avatar=avatar)
+    #     equipment.save()
+    #     return equipment
     
 class PlayerGameCreateSerializer(serializers.ModelSerializer):
     game_id = serializers.IntegerField()

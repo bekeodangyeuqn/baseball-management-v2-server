@@ -907,23 +907,30 @@ class NotificationUpdate(generics.UpdateAPIView):
     serializer_class = NotificationSerializer
 
 class EquipmentUpdate(generics.UpdateAPIView):
-    queryset = Equipment.objects.all()
-    serializer_class = EquipmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def perform_update(self, serializer):
-        equipment : Equipment = self.get_object()
-        serializer.save()
-        # Create a notification after the game is updated
-        managers = Manager.objects.filter(team = equipment.team)
-        for manager in managers:
-            Notification.objects.create(
-                manager = manager, 
-                title = "Cập nhật dụng cụ", 
-                content=f"Thông tin dụng cụ {equipment.name} vừa được cập nhật.",
-                time = datetime.datetime.now(),
-                screen = "EquipmentDetail",
-                item_id = equipment.pk
-            )
+    def patch(self, request, *args, **kwargs):
+        equipment = Equipment.objects.get(pk=kwargs['pk'])
+        serializer = EquipmentSerializer(equipment, data=request.data, partial=True)
+        if serializer.is_valid():
+            if (serializer.validated_data.get('avatar_str')):
+                equipment.avatar = base64_to_image(serializer.validated_data.get('logo_str'))
+            equipment.save()
+            serializer.save()
+            json = serializer.data
+            managers = Manager.objects.filter(team = equipment.team)
+
+            for manager in managers:
+                Notification.objects.create(
+                    manager = manager, 
+                    title = "Cập nhật thông tin dụng cụ", 
+                    content=f"Thông tin của dụng cụ {equipment.name} vừa được cập nhật.",
+                    time = datetime.datetime.now(),
+                    screen = "EquipmentDetail",
+                    item_id = equipment.pk
+                )
+            return Response(json, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PlayerGameUpdate(generics.UpdateAPIView):
     queryset = PlayerGame.objects.all()
