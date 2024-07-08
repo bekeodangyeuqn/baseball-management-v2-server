@@ -722,7 +722,7 @@ class PlayerGame(models.Model):
                     'balk', 'wildPitch', 'oppHomeRun', 'pickOff', 
                 ]   
             for field in fields:
-                setattr(self.player, field, getattr(self, field))
+                setattr(self.player, field, getattr(self, field) + getattr(self.player, field))
 
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
