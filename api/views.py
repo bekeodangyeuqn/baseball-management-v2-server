@@ -914,7 +914,7 @@ class EquipmentUpdate(generics.UpdateAPIView):
         serializer = EquipmentSerializer(equipment, data=request.data, partial=True)
         if serializer.is_valid():
             if (serializer.validated_data.get('avatar_str')):
-                equipment.avatar = base64_to_image(serializer.validated_data.get('logo_str'))
+                equipment.avatar = base64_to_image(serializer.validated_data.get('avatar_str'))
             equipment.save()
             serializer.save()
             json = serializer.data
