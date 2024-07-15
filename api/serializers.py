@@ -111,7 +111,7 @@ class UpdateManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manager
         fields = ('firstName', 'lastName', 'date_of_birth', 'avatar', 'avatar_str', 
-                  'homeTown', 'jerseyNumber', 'phoneNumber', 'email'
+                  'homeTown', 'jerseyNumber', 'phoneNumber', 'email', 'isUpdate'
                   )
         
     def get_id(self, obj):

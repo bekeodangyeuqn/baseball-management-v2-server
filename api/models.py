@@ -109,8 +109,6 @@ class Team(models.Model):
     logo = models.ImageField(
         upload_to="logos/", default="logos/logo.png", null=True, blank=True)
     logo_str = models.TextField(blank=True, null=True)
-    # teamFund = models.BigIntegerField(default=0, blank=True)
-
 
 class Manager(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -127,6 +125,7 @@ class Manager(models.Model):
     jerseyNumber = models.IntegerField(null=True, blank=True, default=-1)
     phoneNumber = models.CharField(max_length=11, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
+    isUpdate = models.BooleanField(default=False)
 
 class JoinRequest(models.Model):
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)

@@ -860,6 +860,20 @@ class ManagerUpdate(generics.UpdateAPIView):
     queryset = Manager.objects.all()
     serializer_class = UpdateManagerSerializer
 
+class CanUpdateManager(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        managerUpdating = Manager.objects.get(pk=kwargs['manager1'])
+        managerUpdated = Manager.objects.get(pk=kwargs['manager2'])
+        if managerUpdating.team != managerUpdated.team:
+            return Response({"message": "You cannot update a manager from another team"}, status=status.HTTP_403_FORBIDDEN)
+        managerUpdated.isUpdate = True
+        managerUpdating.isUpdate = False
+        managerUpdated.save()
+        managerUpdating.save()
+        return Response({"message":"Update completed"}, status=status.HTTP_200_OK)
+
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
